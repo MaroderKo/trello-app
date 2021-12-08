@@ -1,10 +1,11 @@
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Comment {
     private Member member;
     private String text;
     private LocalDateTime date;
-    private Attachment attachment;
+    private List<Attachment> attachments;
 
     public Member getMember() {
         return member;
@@ -28,6 +29,21 @@ public class Comment {
 
     public void setDate(LocalDateTime date) {
         this.date = date;
+    }
+
+    public void addAttachment(Attachment attachment)
+    {
+        attachments.add(attachment);
+    }
+
+    public void removeAttachment(int id)
+    {
+        attachments.remove(id);
+    }
+
+    public Attachment getAttachment(int id)
+    {
+        return attachments.get(id);
     }
 
 }

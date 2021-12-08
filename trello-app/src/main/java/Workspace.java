@@ -30,4 +30,28 @@ public class Workspace {
     public void setVisibility(WorkspaceVisibility visibility) {
         this.visibility = visibility;
     }
+
+    public void addBoard(Board board) {
+        boards.add(board);
+    }
+
+    public void removeBoard(int id) {
+        boards.remove(id);
+    }
+
+    public Board getBoard(int id) {
+        return boards.get(id);
+    }
+
+    public void addMember(Member member) {
+        members.add(member);
+    }
+
+    public void removeMember(int id) {
+        members.remove(id);
+    }
+
+    public Member getMember(int id) {
+        return members.get(id);
+    }
 }

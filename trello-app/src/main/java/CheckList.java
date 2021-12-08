@@ -12,5 +12,19 @@ public class CheckList {
         this.name = name;
     }
 
+    public CheckableItem getItem(int id)
+    {
+        return items.get(id);
+    }
+
+    public void addItem(CheckableItem item)
+    {
+        items.add(item);
+    }
+
+    public void removeItem(int id)
+    {
+        items.remove(id);
+    }
 
 }

@@ -20,4 +20,18 @@ public class CardList {
     public void setArchived(boolean archived) {
         isArchived = archived;
     }
+
+
+    public void addCard(Card card) {
+        cards.add(card);
+    }
+
+    public void removeCard(int id) {
+        cards.remove(id);
+    }
+
+    public Card getCard(int id) {
+        return cards.get(id);
+    }
+
 }
