@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 public class Reminder {
     private LocalDateTime start;
     private LocalDateTime end;
-    private LocalDateTime remindOn;
+    private String remindOn;
     private boolean isActive;
 
     public LocalDateTime getStart() {
@@ -22,11 +22,11 @@ public class Reminder {
         this.end = end;
     }
 
-    public LocalDateTime getRemindOn() {
+    public String getRemindOn() {
         return remindOn;
     }
 
-    public void setRemindOn(LocalDateTime remindOn) {
+    public void setRemindOn(String remindOn) {
         this.remindOn = remindOn;
     }
 
