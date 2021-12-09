@@ -10,8 +10,8 @@ public class Board {
     private List<CardList> cardLists;
     private List<Member> members;
     private BoardVisibilityEnum visibility;
-    private boolean favoriteStatus;
-    private boolean archived;
+    private Boolean favoriteStatus;
+    private Boolean archived;
 
 
     public void addCard(CardList cardList) {

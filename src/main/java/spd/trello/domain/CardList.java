@@ -7,7 +7,7 @@ import java.util.List;
 public class CardList {
     private String name;
     private List<Card> cards;
-    private boolean archived;
+    private Boolean archived;
 
 
     public void addCard(Card card) {

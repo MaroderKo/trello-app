@@ -11,7 +11,7 @@ public class Card {
     private List<Member> assignedMembers;
     private List<Label> labels;
     private List<Attachment> attachments;
-    private boolean archived;
+    private Boolean archived;
     private List<Comment> comments;
     private Reminder reminder;
     private List<CheckList> checkLists;

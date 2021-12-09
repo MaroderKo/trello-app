@@ -8,6 +8,6 @@ public class Reminder {
     private LocalDateTime start;
     private LocalDateTime end;
     private String remindOn;
-    private boolean active;
+    private Boolean active;
 
 }
