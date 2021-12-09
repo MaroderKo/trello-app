@@ -9,8 +9,7 @@ public class Board {
     private String description;
     private List<CardList> cardLists;
     private List<Member> members;
-    private BoardVisibilityEnum visibility;
-    private Boolean favoriteStatus;
+    private BoardVisibility visibility;
     private Boolean archived;
 
 
