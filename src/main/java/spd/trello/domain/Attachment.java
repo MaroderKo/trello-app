@@ -1,3 +1,5 @@
+package spd.trello.domain;
+
 import lombok.Data;
 
 import java.io.File;
