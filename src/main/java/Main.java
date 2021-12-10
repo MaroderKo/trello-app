@@ -4,5 +4,6 @@ public class Main {
         Card card = new Card();
         card.setName("TestCard");
         System.out.println(card.getName());
+
     }
 }

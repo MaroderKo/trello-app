@@ -12,28 +12,4 @@ public class Board {
     private BoardVisibility visibility;
     private Boolean archived;
 
-
-    public void addCard(CardList cardList) {
-        cardLists.add(cardList);
-    }
-
-    public void removeCardList(int id) {
-        cardLists.remove(id);
-    }
-
-    public CardList getCardList(int id) {
-        return cardLists.get(id);
-    }
-
-    public void addMember(Member member) {
-        members.add(member);
-    }
-
-    public void removeMember(int id) {
-        members.remove(id);
-    }
-
-    public Member getMember(int id) {
-        return members.get(id);
-    }
 }

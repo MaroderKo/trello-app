@@ -12,20 +12,6 @@ public class Comment {
     private List<Attachment> attachments;
 
 
-    public void addAttachment(Attachment attachment)
-    {
-        attachments.add(attachment);
-    }
-
-    public void removeAttachment(int id)
-    {
-        attachments.remove(id);
-    }
-
-    public Attachment getAttachment(int id)
-    {
-        return attachments.get(id);
-    }
 
 }
 
