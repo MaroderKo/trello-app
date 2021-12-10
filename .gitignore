@@ -1,3 +1,7 @@
 /.gradle/
 /.idea/
 .gitignore
+/gradle/
+/gradlew
+/gradlew.bat
+/build/
