@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class CardService extends AbstractService<Card>{
-    static List<Card> storage = new ArrayList();
+    static List<Card> storage = new ArrayList<>();
     @Override
     public Card create() {
         Card card = new Card();
@@ -18,11 +18,6 @@ public class CardService extends AbstractService<Card>{
         card.setName(name);
         storage.add(card);
         return card;
-    }
-
-    @Override
-    public void print(Card card) {
-        System.out.println(card);
     }
 
     @Override

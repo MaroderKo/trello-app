@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class BoardService extends AbstractService<Board>{
-    static List<Board> storage = new ArrayList();
+    static List<Board> storage = new ArrayList<>();
     @Override
     public Board create() {
         Board board = new Board();
@@ -19,11 +19,6 @@ public class BoardService extends AbstractService<Board>{
         board.setName(name);
         storage.add(board);
         return board;
-    }
-
-    @Override
-    public void print(Board board) {
-        System.out.println(board);
     }
 
     @Override
