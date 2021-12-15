@@ -1,9 +1,13 @@
 package spd.trello.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 
 @Data
-public class Member {
+@RequiredArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class Member extends Domain{
     private User user;
     private Role role;
 
