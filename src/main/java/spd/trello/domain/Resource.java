@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public abstract class Resource extends Domain{
-    User createdBy;
-    User updatedBy;
+    String createdBy = "";
+    String updatedBy;
     final LocalDateTime createdDate = LocalDateTime.now();
     LocalDateTime updatedDate;
 
