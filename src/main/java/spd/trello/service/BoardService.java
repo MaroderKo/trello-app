@@ -1,9 +1,7 @@
 package spd.trello.service;
 
 import spd.trello.domain.Board;
-import spd.trello.domain.Card;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -24,8 +22,6 @@ public class BoardService extends AbstractService<Board>{
 
     @Override
     public void update(UUID index, Board board) {
-        /*Board board1 = storage.get(index);
-        board1.setName(board.getName());
-        board1.setUpdatedDate(LocalDateTime.now());*/
+        throw new UnsupportedOperationException();
     }
 }
