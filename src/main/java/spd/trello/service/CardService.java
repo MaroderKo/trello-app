@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class CardService extends AbstractService<Card>{
     static List<Card> storage = new ArrayList<>();
@@ -21,10 +22,10 @@ public class CardService extends AbstractService<Card>{
     }
 
     @Override
-    public void update(int index, Card card) {
-        Card card1 = storage.get(index);
+    public void update(UUID index, Card card) {
+        /*Card card1 = storage.get(index);
         card1.setName(card.getName());
-        card1.setUpdatedDate(LocalDateTime.now());
+        card1.setUpdatedDate(LocalDateTime.now());*/
 
 
     }

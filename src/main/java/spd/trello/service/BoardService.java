@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class BoardService extends AbstractService<Board>{
     static List<Board> storage = new ArrayList<>();
@@ -22,9 +23,9 @@ public class BoardService extends AbstractService<Board>{
     }
 
     @Override
-    public void update(int index, Board board) {
-        Board board1 = storage.get(index);
+    public void update(UUID index, Board board) {
+        /*Board board1 = storage.get(index);
         board1.setName(board.getName());
-        board1.setUpdatedDate(LocalDateTime.now());
+        board1.setUpdatedDate(LocalDateTime.now());*/
     }
 }

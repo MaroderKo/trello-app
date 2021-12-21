@@ -1,14 +1,14 @@
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import org.flywaydb.core.Flyway;
 import spd.trello.db.ConnectionPool;
-import spd.trello.domain.*;
-import spd.trello.service.CardService;
+import spd.trello.domain.Workspace;
+import spd.trello.repository.WorkspaceRepository;
+import spd.trello.service.WorkspaceService;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
+import java.util.Scanner;
+import java.util.UUID;
 
 import static spd.trello.Util.loadProperties;
 
@@ -22,6 +22,15 @@ public class Main {
         Flyway flyway = createFlyway(ConnectionPool.get());
         //flyway.clean();
         flyway.migrate();
+
+        WorkspaceService service = new WorkspaceService();
+        Workspace workspace = service.create();
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Input UUID");
+        //UUID id = UUID.fromString(sc.nextLine());
+        UUID id = workspace.getId();
+        Workspace workspace1 = service.read(id);
+        System.out.println(workspace.equals(workspace1));
 
 
     }

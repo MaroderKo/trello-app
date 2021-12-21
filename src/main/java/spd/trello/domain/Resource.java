@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public abstract class Resource extends Domain{
     String createdBy = "";
     String updatedBy;
-    final LocalDateTime createdDate = LocalDateTime.now();
+    LocalDateTime createdDate = LocalDateTime.now();
     LocalDateTime updatedDate;
 
 }
