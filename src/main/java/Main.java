@@ -13,21 +13,13 @@ import java.util.UUID;
 import static spd.trello.Util.loadProperties;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        Properties properties = loadProperties();
-        System.out.println(properties);
-        System.out.println("username="+properties.getProperty("jdbc.username"));
-        System.out.println("url="+properties.getProperty("jdbc.url"));
-
+    public static void main(String[] args) {
         Flyway flyway = createFlyway(ConnectionPool.get());
-        //flyway.clean();
         flyway.migrate();
 
         WorkspaceService service = new WorkspaceService();
         Workspace workspace = service.create();
         Scanner sc = new Scanner(System.in);
-        System.out.print("Input UUID");
-        //UUID id = UUID.fromString(sc.nextLine());
         UUID id = workspace.getId();
         Workspace workspace1 = service.read(id);
         System.out.println(workspace.equals(workspace1));
