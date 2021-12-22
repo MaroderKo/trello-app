@@ -33,10 +33,9 @@ public class WorkspaceRepository {
     }
 
     public void update(UUID uuid, Workspace workspace) {
-        try (PreparedStatement ps = ConnectionPool.get().getConnection().prepareStatement("UPDATE workspace SET id = ?, updated_by = ?, created_by = ?, created_date = ?, updated_date = ?, name = ?, description = ? WHERE id = "+uuid)) {
+        try (PreparedStatement ps = ConnectionPool.get().getConnection().prepareStatement("UPDATE workspace SET updated_by = ?, created_by = ?, created_date = ?, updated_date = ?, name = ?, description = ? WHERE id = "+uuid)) {
 
 
-            ps.setObject(1, workspace.getId(), Types.OTHER);
             ps.setObject(2, workspace.getUpdatedBy() == null ? null : workspace.getUpdatedBy());
             ps.setString(3, workspace.getCreatedBy());
             ps.setObject(4, Timestamp.valueOf(workspace.getCreatedDate()), Types.TIMESTAMP);
