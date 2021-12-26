@@ -11,8 +11,11 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.1'
+    implementation group: 'org.flywaydb', name: 'flyway-core', version: '8.2.2'
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.0'
+    testImplementation group: 'org.junit.jupiter', name:'junit-jupiter-api', version: '5.7.2'
+    testRuntimeOnly group: 'org.junit.jupiter', name:'junit-jupiter-engine', version:'5.7.2'
 }
 lombok {
     version = '1.18.4'
