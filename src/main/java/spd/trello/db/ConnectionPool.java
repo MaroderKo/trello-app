@@ -33,6 +33,8 @@ public class ConnectionPool {
         cfg.setJdbcUrl(properties.getProperty("jdbc.url"));
         cfg.setUsername(properties.getProperty("jdbc.username"));
         cfg.setPassword(properties.getProperty("jdbc.password"));
+        cfg.setDriverClassName("org.postgresql.Driver");
+
 
         int maxPoolSize = Integer.parseInt(properties.getProperty("jdbc.pool.maxConnection"));
         cfg.setMaximumPoolSize(maxPoolSize);

@@ -16,17 +16,18 @@ public class Main {
     public static void main(String[] args) {
         Flyway flyway = createFlyway(ConnectionPool.get());
         flyway.migrate();
-
-        WorkspaceService service = new WorkspaceService();
+        /*WorkspaceRepository repository = new WorkspaceRepository();
+        System.out.println(repository.read(UUID.fromString("49eec80b-da8b-4cde-9222-c765cff34990")));
+*//*        WorkspaceService service = new WorkspaceService(new WorkspaceRepository());
         Workspace workspace = service.create();
         Scanner sc = new Scanner(System.in);
         UUID id = workspace.getId();
         Workspace workspace1 = service.read(id);
         System.out.println(workspace.equals(workspace1));
-
-
+        System.out.println(UUID.randomUUID());*//*
+*/
     }
-
+//TODO: change parent id interface with method MOVE
 
     private static Flyway createFlyway(DataSource dataSource)
     {
