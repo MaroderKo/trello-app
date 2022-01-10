@@ -17,7 +17,9 @@ public class WorkspaceRepository implements IRepository<Workspace> {
 
     @Override
     public Workspace create(UUID parent, Workspace workspace) {
-        try (PreparedStatement ps = ConnectionPool.get().getConnection().prepareStatement("INSERT INTO workspace (id, updated_by, created_by, created_date, updated_date, name, description, visibility) VALUES (?, ?, ?, ?, ?, ?, ?, ?);")) {
+        try (
+            Connection connection = ConnectionPool.get().getConnection();
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO workspace (id, updated_by, created_by, created_date, updated_date, name, description, visibility) VALUES (?, ?, ?, ?, ?, ?, ?, ?);")) {
 
 
             ps.setObject(1, workspace.getId(), Types.OTHER);
@@ -40,9 +42,11 @@ public class WorkspaceRepository implements IRepository<Workspace> {
     }
 
     @Override
-    public void update(UUID uuid, Workspace workspace) {
+    public void update(Workspace workspace) {
         workspace.setUpdatedDate(LocalDateTime.now());
-        try (PreparedStatement ps = ConnectionPool.get().getConnection().prepareStatement("UPDATE workspace SET updated_by = ?, updated_date = ?, name = ?, description = ?, visibility = ? WHERE id = \'" + uuid+"\'")) {
+        try (
+            Connection connection = ConnectionPool.get().getConnection();
+            PreparedStatement ps = connection.prepareStatement("UPDATE workspace SET updated_by = ?, updated_date = ?, name = ?, description = ?, visibility = ? WHERE id = \'" + workspace.getId()+"\'")) {
 
 
             ps.setObject(1, workspace.getUpdatedBy() == null ? null : workspace.getUpdatedBy());
@@ -61,7 +65,9 @@ public class WorkspaceRepository implements IRepository<Workspace> {
 
     @Override
     public void delete(UUID uuid) {
-        try (PreparedStatement ps = ConnectionPool.get().getConnection().prepareStatement("DELETE FROM workspace WHERE id = \'" + uuid + "\';")) {
+        try (
+            Connection connection = ConnectionPool.get().getConnection();
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM workspace WHERE id = \'" + uuid + "\';")) {
             ps.execute();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -72,7 +78,9 @@ public class WorkspaceRepository implements IRepository<Workspace> {
     @Override
     public Workspace read(UUID uuid) {
         Workspace workspace = null;
-        try (PreparedStatement ps = ConnectionPool.get().getConnection().prepareStatement("SELECT * FROM workspace WHERE id = \'" + uuid.toString() + "\';")) {
+        try (
+            Connection connection = ConnectionPool.get().getConnection();
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM workspace WHERE id = \'" + uuid.toString() + "\';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -103,7 +111,9 @@ public class WorkspaceRepository implements IRepository<Workspace> {
     @Override
     public List<Workspace> getAll() {
         List<Workspace> workspaces = new ArrayList<>();
-        try (PreparedStatement ps = ConnectionPool.get().getConnection().prepareStatement("SELECT * FROM workspace")) {
+        try (
+            Connection connection = ConnectionPool.get().getConnection();
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM workspace")) {
 
             ResultSet rs = ps.executeQuery();
 

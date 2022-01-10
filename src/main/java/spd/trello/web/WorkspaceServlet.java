@@ -64,7 +64,7 @@ public class WorkspaceServlet extends HttpServlet {
                 workspace.setName(req.getParameter("name"));
                 workspace.setDescription(req.getParameter("description"));
                 workspace.setVisibility(WorkspaceVisibility.valueOf(req.getParameter("visibility")));
-                service.update(workspace.getId(), workspace);
+                service.update(workspace);
                 resp.sendRedirect("workspaces");
                 break;
             case "create":

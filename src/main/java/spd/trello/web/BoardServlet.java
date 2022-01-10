@@ -100,7 +100,7 @@ public class BoardServlet extends HttpServlet {
                 board.setVisibility(BoardVisibility.valueOf(req.getParameter("visibility")));
                 board.setArchived(req.getParameter("archived") != null);
                 System.out.println("archived: "+req.getParameter("archived"));
-                service.update(board.getId(), board);
+                service.update(board);
                 resp.sendRedirect("boards");
                 break;
             case "create":

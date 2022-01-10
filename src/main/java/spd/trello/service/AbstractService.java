@@ -23,9 +23,9 @@ public abstract class AbstractService<T extends Domain> {
     {
         return repository.read(id);
     }
-    public void update (UUID index, T t)
+    public void update (T t)
     {
-        repository.update(index, t);
+        repository.update(t);
     }
     public void delete(UUID id)
     {
