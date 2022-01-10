@@ -10,10 +10,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Comment extends Resource{
-    private Member member;
+    private String author;
     private String text;
     private LocalDateTime date;
     private List<Attachment> attachments;
+    private Boolean archived;
 
 
 

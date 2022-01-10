@@ -1,6 +1,5 @@
 package spd.trello.service;
 
-import spd.trello.domain.CardList;
 import spd.trello.domain.CheckableItem;
 import spd.trello.repository.IRepository;
 
