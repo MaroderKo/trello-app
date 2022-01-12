@@ -21,11 +21,11 @@ public abstract class AbstractService<T extends Domain> {
     }
     public T read(UUID id)
     {
-        return repository.read(id);
+        return repository.getById(id);
     }
-    public void update (T t)
+    public T update (T t)
     {
-        repository.update(t);
+        return repository.update(t);
     }
     public void delete(UUID id)
     {

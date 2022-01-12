@@ -26,9 +26,9 @@ public class CardServiceTest extends BaseTest{
     AbstractService<Board> boardService = new BoardService(new BoardRepository());
     AbstractService<CardList> cardListService = new CardListService(new CardListRepository());
     AbstractService<Card> cardService = new CardService(new CardRepository());
-    UUID workspace_id;
-    UUID board_id;
-    UUID cardlist_id;
+    UUID workspaceId;
+    UUID boardId;
+    UUID cardListId;
     Workspace testWorkspace;
     Board testBoard;
     CardList testCardList;
@@ -36,28 +36,28 @@ public class CardServiceTest extends BaseTest{
 
 
     @BeforeEach
-    public void objects_init()
+    public void initObjects()
     {
         testWorkspace = new Workspace();
         testWorkspace.setName("Test");
         testWorkspace.setDescription("12354");
         testWorkspace.setVisibility(WorkspaceVisibility.PRIVATE);
         workspaceService.create(null, testWorkspace);
-        workspace_id = testWorkspace.getId();
+        workspaceId = testWorkspace.getId();
 
         testBoard = new Board();
         testBoard.setName("testBoard");
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.WORKSPACE);
-        boardService.create(workspace_id,testBoard);
-        board_id = testBoard.getId();
+        boardService.create(workspaceId,testBoard);
+        boardId = testBoard.getId();
 
         testCardList = new CardList();
         testCardList.setName("firstCardList");
         testCardList.setArchived(false);
-        cardListService.create(board_id, testCardList);
-        cardlist_id = testCardList.getId();
+        cardListService.create(boardId, testCardList);
+        cardListId = testCardList.getId();
 
         testCard = new Card();
         testCard.setName("firstCard");
@@ -85,14 +85,14 @@ public class CardServiceTest extends BaseTest{
     @AfterEach
     public void cleaner() throws SQLException {
         try(Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM card;DELETE FROM cardlist; DELETE FROM board; DELETE FROM workspace");) {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM card;DELETE FROM cardlist; DELETE FROM board; DELETE FROM workspace")) {
             ps.execute();
         }
     }
 
     @Test
     public void create(){
-        Card returned = cardService.create(cardlist_id, testCard);
+        Card returned = cardService.create(cardListId, testCard);
         assertEquals(testCard, returned);
         assertAll(
                 () -> assertEquals("firstCard", returned.getName()),
@@ -113,7 +113,7 @@ public class CardServiceTest extends BaseTest{
 
     @Test
     public void update(){
-        cardService.create(cardlist_id, testCard);
+        cardService.create(cardListId, testCard);
         testCard.setName("Updated");
         testCard.setDescription("Updated");
         cardService.update(testCard);
@@ -129,7 +129,7 @@ public class CardServiceTest extends BaseTest{
     @Test
     public void delete(){
         assertNull(cardService.read(testCard.getId()));
-        cardService.create(cardlist_id, testCard);
+        cardService.create(cardListId, testCard);
         assertNotNull(cardService.read(testCard.getId()));
         cardService.delete(testCard.getId());
         assertNull(cardService.read(testCard.getId()));
@@ -139,10 +139,10 @@ public class CardServiceTest extends BaseTest{
     public void getAll(){
         List<Card> inMemory = new ArrayList<>();
         inMemory.add(testCard);
-        cardService.create(cardlist_id, testCard);
+        cardService.create(cardListId, testCard);
         regenerateCard();
         inMemory.add(testCard);
-        cardService.create(cardlist_id, testCard);
+        cardService.create(cardListId, testCard);
         assertEquals(inMemory, cardService.getAll());
     }
 
@@ -154,7 +154,7 @@ public class CardServiceTest extends BaseTest{
         cardService.create(first, card1);
         regenerateCardList();
         regenerateCard();
-        cardListService.create(board_id,testCardList);
+        cardListService.create(boardId,testCardList);
         CardList cardList2 = testCardList;
         UUID second = cardList2.getId();
         Card card2 = testCard;

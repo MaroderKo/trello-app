@@ -33,52 +33,55 @@ public class CardRepository implements IRepository<Card> {
 
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
-        return read(Card.getId());
+        return getById(Card.getId());
     }
 
     @Override
-    public void update(Card Card) {
-        Card.setUpdatedDate(LocalDateTime.now());
+    public Card update(Card card) {
+        card.setUpdatedDate(LocalDateTime.now());
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("UPDATE card SET updated_by = ?, updated_date = ?, name = ?, description = ?, archived = ? WHERE id = \'" + Card.getId() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("UPDATE card SET updated_by = ?, updated_date = ?, name = ?, description = ?, archived = ? WHERE id = '" + card.getId() + "';")) {
 
 
-            ps.setObject(1, Card.getUpdatedBy() == null ? null : Card.getUpdatedBy());
-            ps.setObject(2, Card.getUpdatedDate() == null ? null : Timestamp.valueOf(Card.getUpdatedDate()), Types.TIMESTAMP);
-            ps.setString(3, Card.getName());
-            ps.setString(4, Card.getDescription());
-            ps.setBoolean(5, Card.getArchived());
+            ps.setObject(1, card.getUpdatedBy() == null ? null : card.getUpdatedBy());
+            ps.setObject(2, card.getUpdatedDate() == null ? null : Timestamp.valueOf(card.getUpdatedDate()), Types.TIMESTAMP);
+            ps.setString(3, card.getName());
+            ps.setString(4, card.getDescription());
+            ps.setBoolean(5, card.getArchived());
 
             ps.execute();
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
+
+        return getById(card.getId());
     }
 
     @Override
     public void delete(UUID uuid) {
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("DELETE FROM card WHERE id = \'" + uuid + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("DELETE FROM card WHERE id = '" + uuid + "';")) {
             ps.execute();
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error occurred while connecting to database");
+            e.printStackTrace();
         }
 
     }
 
     @Override
-    public Card read(UUID uuid) {
+    public Card getById(UUID uuid) {
         Card Card = null;
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM card WHERE id = \'" + uuid.toString() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM card WHERE id = '" + uuid.toString() + "';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -100,7 +103,7 @@ public class CardRepository implements IRepository<Card> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return Card;
@@ -134,7 +137,7 @@ public class CardRepository implements IRepository<Card> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return Cards;
@@ -145,7 +148,7 @@ public class CardRepository implements IRepository<Card> {
         List<Card> Cards = new ArrayList<>();
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM Card WHERE cardlist_id = \'" + id.toString() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM Card WHERE cardlist_id = '" + id.toString() + "';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -168,7 +171,7 @@ public class CardRepository implements IRepository<Card> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return Cards;

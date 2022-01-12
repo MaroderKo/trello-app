@@ -18,21 +18,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardServiceTest extends BaseTest{
-    UUID workspace_id;
+    UUID workspaceId;
     AbstractService<Workspace> workspaceService = new WorkspaceService(new WorkspaceRepository());
     AbstractService<Board> boardService = new BoardService(new BoardRepository());
     Board testBoard;
     Workspace testWorkspace;
 
     @BeforeEach
-    public void objects_init()
+    public void initObjects()
     {
         testBoard = new Board();
         testBoard.setName("testBoard");
@@ -45,7 +44,7 @@ public class BoardServiceTest extends BaseTest{
         testWorkspace.setDescription("12354");
         testWorkspace.setVisibility(WorkspaceVisibility.PRIVATE);
         workspaceService.create(null, testWorkspace);
-        workspace_id = testWorkspace.getId();
+        workspaceId = testWorkspace.getId();
     }
 
     public void regenerateWorkspace()
@@ -65,14 +64,14 @@ public class BoardServiceTest extends BaseTest{
     @AfterEach
     public void cleaner() throws SQLException {
         try(Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM board; DELETE FROM workspace");) {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM board; DELETE FROM workspace")) {
             ps.execute();
         }
     }
 
     @Test
     public void create(){
-        Board returned = boardService.create(workspace_id, testBoard);
+        Board returned = boardService.create(workspaceId, testBoard);
         assertEquals(testBoard, returned);
         assertAll(
                 () -> assertEquals("testBoard", returned.getName()),
@@ -94,7 +93,7 @@ public class BoardServiceTest extends BaseTest{
 
     @Test
     public void update(){
-        boardService.create(workspace_id, testBoard);
+        boardService.create(workspaceId, testBoard);
         testBoard.setName("Updated");
         testBoard.setDescription("Updated");
         testBoard.setVisibility(BoardVisibility.PUBLIC);
@@ -111,7 +110,7 @@ public class BoardServiceTest extends BaseTest{
 
     @Test
     public void delete(){
-        boardService.create(workspace_id,testBoard);
+        boardService.create(workspaceId,testBoard);
         boardService.delete(testBoard.getId());
         assertNull(boardService.read(testBoard.getId()));
     }
@@ -120,10 +119,10 @@ public class BoardServiceTest extends BaseTest{
     public void getAll(){
         List<Board> inMemory = new ArrayList<>();
         inMemory.add(testBoard);
-        boardService.create(workspace_id, testBoard);
+        boardService.create(workspaceId, testBoard);
         regenerateBoard();
         inMemory.add(testBoard);
-        boardService.create(workspace_id, testBoard);
+        boardService.create(workspaceId, testBoard);
         assertEquals(inMemory, boardService.getAll());
     }
 

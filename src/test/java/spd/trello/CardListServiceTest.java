@@ -27,21 +27,21 @@ public class CardListServiceTest extends BaseTest {
     AbstractService<Workspace> workspaceService = new WorkspaceService(new WorkspaceRepository());
     AbstractService<Board> boardService = new BoardService(new BoardRepository());
     AbstractService<CardList> cardListService = new CardListService(new CardListRepository());
-    UUID workspace_id;
-    UUID board_id;
+    UUID workspaceId;
+    UUID boardId;
     Workspace testWorkspace;
     Board testBoard;
     CardList testCardList;
 
     @BeforeEach
-    public void objects_init()
+    public void initObjects()
     {
         testWorkspace = new Workspace();
         testWorkspace.setName("Test");
         testWorkspace.setDescription("12354");
         testWorkspace.setVisibility(WorkspaceVisibility.PRIVATE);
         workspaceService.create(null, testWorkspace);
-        workspace_id = testWorkspace.getId();
+        workspaceId = testWorkspace.getId();
 
 
         testBoard = new Board();
@@ -49,8 +49,8 @@ public class CardListServiceTest extends BaseTest {
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.WORKSPACE);
-        boardService.create(workspace_id,testBoard);
-        board_id = testBoard.getId();
+        boardService.create(workspaceId,testBoard);
+        boardId = testBoard.getId();
 
         testCardList = new CardList();
         testCardList.setName("firstCardList");
@@ -63,7 +63,7 @@ public class CardListServiceTest extends BaseTest {
         testBoard.setArchived(false);
         testBoard.setDescription("54321");
         testBoard.setVisibility(BoardVisibility.PUBLIC);
-        board_id = testBoard.getId();
+        boardId = testBoard.getId();
 
     }
 
@@ -80,14 +80,14 @@ public class CardListServiceTest extends BaseTest {
     @AfterEach
     public void cleaner() throws SQLException {
         try(Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM cardlist; DELETE FROM board; DELETE FROM workspace");) {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM cardlist; DELETE FROM board; DELETE FROM workspace")) {
             ps.execute();
         }
     }
 
     @Test
     public void create() {
-        CardList returned = cardListService.create(board_id, testCardList);
+        CardList returned = cardListService.create(boardId, testCardList);
         assertEquals(testCardList, returned);
         assertAll(
                 () -> assertEquals("firstCardList", returned.getName()),
@@ -107,7 +107,7 @@ public class CardListServiceTest extends BaseTest {
 
     @Test
     public void update() {
-        CardList cardList = cardListService.create(board_id, testCardList);
+        CardList cardList = cardListService.create(boardId, testCardList);
         cardList.setName("update");
         cardList.setArchived(true);
         cardListService.update(cardList);
@@ -122,7 +122,7 @@ public class CardListServiceTest extends BaseTest {
     @Test
     public void delete() {
         assertNull(cardListService.read(testCardList.getId()));
-        cardListService.create(board_id, testCardList);
+        cardListService.create(boardId, testCardList);
         assertNotNull(cardListService.read(testCardList.getId()));
         cardListService.delete(testCardList.getId());
         assertNull(cardListService.read(testCardList.getId()));
@@ -132,10 +132,10 @@ public class CardListServiceTest extends BaseTest {
     public void getAll() {
         List<CardList> inMemory = new ArrayList<>();
         inMemory.add(testCardList);
-        cardListService.create(board_id, testCardList);
+        cardListService.create(boardId, testCardList);
         regenerateCardList();
         inMemory.add(testCardList);
-        cardListService.create(board_id, testCardList);
+        cardListService.create(boardId, testCardList);
         assertEquals(inMemory, cardListService.getAll());
     }
 
@@ -149,7 +149,7 @@ public class CardListServiceTest extends BaseTest {
         cardListService.create(first, cardList1);
         regenerateBoard();
         regenerateCardList();
-        boardService.create(workspace_id,testBoard);
+        boardService.create(workspaceId,testBoard);
         Board board2 = testBoard;
         UUID second = board2.getId();
         CardList cardList2 = testCardList;

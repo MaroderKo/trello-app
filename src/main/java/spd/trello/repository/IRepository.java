@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IRepository<T extends Domain> {
-    public abstract T create(UUID parent, T t);
+    T create(UUID parent, T t);
 
-    public abstract void delete(UUID id);
+    void delete(UUID id);
 
-    public abstract void update(T t);
+    T update(T t);
 
-    public abstract T read(UUID id);
+    T getById(UUID id);
 
-    public List<T> getAll();
+    List<T> getAll();
 
-    public List<T> getParrent(UUID id);
+    List<T> getParrent(UUID id);
 
 }

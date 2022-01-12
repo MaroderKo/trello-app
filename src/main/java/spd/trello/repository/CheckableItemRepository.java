@@ -24,47 +24,50 @@ public class CheckableItemRepository implements IRepository<CheckableItem> {
 
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
-        return read(checkableItem.getId());
+        return getById(checkableItem.getId());
     }
 
     @Override
-    public void update(CheckableItem CheckableItem) {
+    public CheckableItem update(CheckableItem checkableItem) {
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("UPDATE checkable_item SET name = ?, checked = ? WHERE id = \'" + CheckableItem.getId() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("UPDATE checkable_item SET name = ?, checked = ? WHERE id = '" + checkableItem.getId() + "';")) {
 
-            ps.setString(1, CheckableItem.getName());
-            ps.setBoolean(2, CheckableItem.getChecked());
+            ps.setString(1, checkableItem.getName());
+            ps.setBoolean(2, checkableItem.getChecked());
 
             ps.execute();
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
+
+        return getById(checkableItem.getId());
     }
 
     @Override
     public void delete(UUID uuid) {
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("DELETE FROM checkable_item WHERE id = \'" + uuid + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("DELETE FROM checkable_item WHERE id = '" + uuid + "';")) {
             ps.execute();
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error occurred while connecting to database");
+            e.printStackTrace();
         }
 
     }
 
     @Override
-    public CheckableItem read(UUID uuid) {
+    public CheckableItem getById(UUID uuid) {
         CheckableItem CheckableItem = null;
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM checkable_item WHERE id = \'" + uuid.toString() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM checkable_item WHERE id = '" + uuid.toString() + "';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -77,7 +80,7 @@ public class CheckableItemRepository implements IRepository<CheckableItem> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return CheckableItem;
@@ -102,7 +105,7 @@ public class CheckableItemRepository implements IRepository<CheckableItem> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return CheckableItems;
@@ -113,7 +116,7 @@ public class CheckableItemRepository implements IRepository<CheckableItem> {
         List<CheckableItem> CheckableItems = new ArrayList<>();
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM checkable_item WHERE checklist_id = \'" + id.toString() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM checkable_item WHERE checklist_id = '" + id.toString() + "';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -127,7 +130,7 @@ public class CheckableItemRepository implements IRepository<CheckableItem> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return CheckableItems;

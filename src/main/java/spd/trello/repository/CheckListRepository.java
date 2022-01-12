@@ -31,18 +31,18 @@ public class CheckListRepository implements IRepository<CheckList> {
 
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
-        return read(checkList.getId());
+        return getById(checkList.getId());
     }
 
     @Override
-    public void update(CheckList checkList) {
+    public CheckList update(CheckList checkList) {
         checkList.setUpdatedDate(LocalDateTime.now());
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("UPDATE CheckList SET updated_by = ?, updated_date = ?, name = ? WHERE id = \'" + checkList.getId() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("UPDATE CheckList SET updated_by = ?, updated_date = ?, name = ? WHERE id = '" + checkList.getId() + "';")) {
 
 
             ps.setObject(1, checkList.getUpdatedBy() == null ? null : checkList.getUpdatedBy());
@@ -52,29 +52,32 @@ public class CheckListRepository implements IRepository<CheckList> {
             ps.execute();
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
+
+        return getById(checkList.getId());
     }
 
     @Override
     public void delete(UUID uuid) {
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("DELETE FROM CheckList WHERE id = \'" + uuid + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("DELETE FROM CheckList WHERE id = '" + uuid + "';")) {
             ps.execute();
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error occurred while connecting to database");
+            e.printStackTrace();
         }
 
     }
 
     @Override
-    public CheckList read(UUID uuid) {
+    public CheckList getById(UUID uuid) {
         CheckList checkList = null;
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM checklist WHERE id = \'" + uuid.toString() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM checklist WHERE id = '" + uuid.toString() + "';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -94,7 +97,7 @@ public class CheckListRepository implements IRepository<CheckList> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return checkList;
@@ -126,7 +129,7 @@ public class CheckListRepository implements IRepository<CheckList> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return checkLists;
@@ -137,7 +140,7 @@ public class CheckListRepository implements IRepository<CheckList> {
         List<CheckList> checkLists = new ArrayList<>();
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM CheckList WHERE card_id = \'" + id.toString() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM CheckList WHERE card_id = '" + id.toString() + "';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -158,7 +161,7 @@ public class CheckListRepository implements IRepository<CheckList> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return checkLists;

@@ -2,7 +2,6 @@ package spd.trello.repository;
 
 import spd.trello.db.ConnectionPool;
 import spd.trello.domain.CardList;
-import spd.trello.domain.BoardVisibility;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -33,18 +32,18 @@ public class CardListRepository implements IRepository<CardList> {
 
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
-        return read(cardList.getId());
+        return getById(cardList.getId());
     }
 
     @Override
-    public void update(CardList cardList) {
+    public CardList update(CardList cardList) {
         cardList.setUpdatedDate(LocalDateTime.now());
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("UPDATE cardlist SET updated_by = ?, updated_date = ?, name = ?, archived = ? WHERE id = \'" + cardList.getId() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("UPDATE cardlist SET updated_by = ?, updated_date = ?, name = ?, archived = ? WHERE id = '" + cardList.getId() + "';")) {
 
 
             ps.setObject(1, cardList.getUpdatedBy() == null ? null : cardList.getUpdatedBy());
@@ -55,29 +54,32 @@ public class CardListRepository implements IRepository<CardList> {
             ps.execute();
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
+
+        return getById(cardList.getId());
     }
 
     @Override
     public void delete(UUID uuid) {
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("DELETE FROM cardlist WHERE id = \'" + uuid + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("DELETE FROM cardlist WHERE id = '" + uuid + "';")) {
             ps.execute();
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error occurred while connecting to database");
+            e.printStackTrace();
         }
 
     }
 
     @Override
-    public CardList read(UUID uuid) {
+    public CardList getById(UUID uuid) {
         CardList cardList = null;
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM cardlist WHERE id = \'" + uuid.toString() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM cardlist WHERE id = '" + uuid.toString() + "';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -98,7 +100,7 @@ public class CardListRepository implements IRepository<CardList> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return cardList;
@@ -131,7 +133,7 @@ public class CardListRepository implements IRepository<CardList> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return boards;
@@ -142,7 +144,7 @@ public class CardListRepository implements IRepository<CardList> {
         List<CardList> boards = new ArrayList<>();
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM cardlist WHERE board_id = \'" + id.toString() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM cardlist WHERE board_id = '" + id.toString() + "';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -164,7 +166,7 @@ public class CardListRepository implements IRepository<CardList> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return boards;

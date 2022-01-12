@@ -24,7 +24,7 @@ public class WorkspaceServiceTest extends BaseTest {
     static Workspace testWorkspace;
 
     @BeforeEach
-    protected void workspace_init() {
+    protected void workspaceInit() {
         Workspace workspace = new Workspace();
         workspace.setName("Test");
         workspace.setDescription("12354");
@@ -35,7 +35,7 @@ public class WorkspaceServiceTest extends BaseTest {
     @AfterEach
     public void cleaner() throws SQLException {
         try(Connection connection = ConnectionPool.get().getConnection();
-        PreparedStatement ps = connection.prepareStatement("DELETE FROM workspace");) {
+        PreparedStatement ps = connection.prepareStatement("DELETE FROM workspace")) {
             ps.execute();
         }
     }
@@ -75,7 +75,7 @@ public class WorkspaceServiceTest extends BaseTest {
                 () -> assertEquals("Updated", newWorkspace.getDescription()),
                 () -> assertEquals(WorkspaceVisibility.PUBLIC, newWorkspace.getVisibility())
         );
-    };
+    }
 
     @Test
     public void delete()
@@ -91,11 +91,11 @@ public class WorkspaceServiceTest extends BaseTest {
         List<Workspace> inMemory = new ArrayList<>();
         inMemory.add(testWorkspace);
         workspaceService.create(null, testWorkspace);
-        workspace_init();
+        workspaceInit();
         inMemory.add(testWorkspace);
         workspaceService.create(null, testWorkspace);
         assertEquals(inMemory, workspaceService.getAll());
-    };
+    }
 
     @Test
     public void getParent() {

@@ -35,18 +35,18 @@ public class WorkspaceRepository implements IRepository<Workspace> {
 
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
-        return read(workspace.getId());
+        return getById(workspace.getId());
     }
 
     @Override
-    public void update(Workspace workspace) {
+    public Workspace update(Workspace workspace) {
         workspace.setUpdatedDate(LocalDateTime.now());
         try (
             Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("UPDATE workspace SET updated_by = ?, updated_date = ?, name = ?, description = ?, visibility = ? WHERE id = \'" + workspace.getId()+"\'")) {
+            PreparedStatement ps = connection.prepareStatement("UPDATE workspace SET updated_by = ?, updated_date = ?, name = ?, description = ?, visibility = ? WHERE id = '" + workspace.getId()+"'")) {
 
 
             ps.setObject(1, workspace.getUpdatedBy() == null ? null : workspace.getUpdatedBy());
@@ -58,29 +58,32 @@ public class WorkspaceRepository implements IRepository<Workspace> {
             ps.execute();
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
+
+        return getById(workspace.getId());
     }
 
     @Override
     public void delete(UUID uuid) {
         try (
             Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM workspace WHERE id = \'" + uuid + "\';")) {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM workspace WHERE id = '" + uuid + "';")) {
             ps.execute();
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error occurred while connecting to database");
+            e.printStackTrace();
         }
 
     }
 
     @Override
-    public Workspace read(UUID uuid) {
+    public Workspace getById(UUID uuid) {
         Workspace workspace = null;
         try (
             Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM workspace WHERE id = \'" + uuid.toString() + "\';")) {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM workspace WHERE id = '" + uuid.toString() + "';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -102,7 +105,7 @@ public class WorkspaceRepository implements IRepository<Workspace> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return workspace;
@@ -136,7 +139,7 @@ public class WorkspaceRepository implements IRepository<Workspace> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return workspaces;

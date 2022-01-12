@@ -35,18 +35,18 @@ public class BoardRepository implements IRepository<Board> {
 
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
-        return read(board.getId());
+        return getById(board.getId());
     }
 
     @Override
-    public void update(Board board) {
+    public Board update(Board board) {
         board.setUpdatedDate(LocalDateTime.now());
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("UPDATE Board SET updated_by = ?, updated_date = ?, name = ?, description = ?, archived = ?, visibility = ? WHERE id = \'" + board.getId() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("UPDATE Board SET updated_by = ?, updated_date = ?, name = ?, description = ?, archived = ?, visibility = ? WHERE id = '" + board.getId() + "';")) {
 
 
             ps.setObject(1, board.getUpdatedBy() == null ? null : board.getUpdatedBy());
@@ -59,29 +59,32 @@ public class BoardRepository implements IRepository<Board> {
             ps.execute();
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
+
+        return getById(board.getId());
     }
 
     @Override
     public void delete(UUID uuid) {
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("DELETE FROM board WHERE id = \'" + uuid + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("DELETE FROM board WHERE id = '" + uuid + "';")) {
             ps.execute();
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error occurred while connecting to database");
+            e.printStackTrace();
         }
 
     }
 
     @Override
-    public Board read(UUID uuid) {
+    public Board getById(UUID uuid) {
         Board board = null;
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM board WHERE id = \'" + uuid.toString() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM board WHERE id = '" + uuid.toString() + "';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -104,7 +107,7 @@ public class BoardRepository implements IRepository<Board> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return board;
@@ -139,7 +142,7 @@ public class BoardRepository implements IRepository<Board> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return boards;
@@ -150,7 +153,7 @@ public class BoardRepository implements IRepository<Board> {
         List<Board> boards = new ArrayList<>();
         try (
                 Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM board WHERE workspace_id = \'" + id.toString() + "\';")) {
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM board WHERE workspace_id = '" + id.toString() + "';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -174,7 +177,7 @@ public class BoardRepository implements IRepository<Board> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return boards;

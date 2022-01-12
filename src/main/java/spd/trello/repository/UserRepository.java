@@ -28,17 +28,17 @@ public class UserRepository implements IRepository<User> {
 
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
-        return read(user.getId());
+        return getById(user.getId());
     }
 
     @Override
-    public void update(User user) {
+    public User update(User user) {
         try (
             Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("UPDATE \"user\" SET firstname = ?, lastname = ?, email = ? WHERE id = \'" + user.getId()+"\'")) {
+            PreparedStatement ps = connection.prepareStatement("UPDATE \"user\" SET firstname = ?, lastname = ?, email = ? WHERE id = '" + user.getId()+"'")) {
 
 
             ps.setObject(1, user.getFirstName());
@@ -48,29 +48,32 @@ public class UserRepository implements IRepository<User> {
             ps.execute();
 
         } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
+
+        return getById(user.getId());
     }
 
     @Override
     public void delete(UUID uuid) {
         try (
             Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM \"user\" WHERE id = \'" + uuid + "\';")) {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM \"user\" WHERE id = '" + uuid + "';")) {
             ps.execute();
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error occurred while connecting to database");
+            e.printStackTrace();
         }
 
     }
 
     @Override
-    public User read(UUID uuid) {
+    public User getById(UUID uuid) {
         User user = null;
         try (
             Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\" WHERE id = \'" + uuid.toString() + "\';")) {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\" WHERE id = '" + uuid.toString() + "';")) {
 
             ResultSet rs = ps.executeQuery();
 
@@ -85,7 +88,7 @@ public class UserRepository implements IRepository<User> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return user;
@@ -111,7 +114,7 @@ public class UserRepository implements IRepository<User> {
 
 
         } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
+            System.err.println("Error occurred while connecting to database");
             e.printStackTrace();
         }
         return Users;

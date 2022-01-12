@@ -23,10 +23,10 @@ public class CommentServiceTest extends BaseTest{
     AbstractService<CardList> cardListService = new CardListService(new CardListRepository());
     AbstractService<Card> cardService = new CardService(new CardRepository());
     AbstractService<Comment> commentService = new CommentService(new CommentRepository());
-    UUID workspace_id;
-    UUID board_id;
-    UUID cardlist_id;
-    UUID card_id;
+    UUID workspaceId;
+    UUID boardId;
+    UUID cardListId;
+    UUID cardId;
     Workspace testWorkspace;
     Board testBoard;
     CardList testCardList;
@@ -35,35 +35,35 @@ public class CommentServiceTest extends BaseTest{
 
 
     @BeforeEach
-    public void objects_init()
+    public void initObjects()
     {
         testWorkspace = new Workspace();
         testWorkspace.setName("Test");
         testWorkspace.setDescription("12354");
         testWorkspace.setVisibility(WorkspaceVisibility.PRIVATE);
         workspaceService.create(null, testWorkspace);
-        workspace_id = testWorkspace.getId();
+        workspaceId = testWorkspace.getId();
 
         testBoard = new Board();
         testBoard.setName("testBoard");
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.WORKSPACE);
-        boardService.create(workspace_id,testBoard);
-        board_id = testBoard.getId();
+        boardService.create(workspaceId,testBoard);
+        boardId = testBoard.getId();
 
         testCardList = new CardList();
         testCardList.setName("firstCardList");
         testCardList.setArchived(false);
-        cardListService.create(board_id, testCardList);
-        cardlist_id = testCardList.getId();
+        cardListService.create(boardId, testCardList);
+        cardListId = testCardList.getId();
 
         testCard = new Card();
         testCard.setName("firstCard");
         testCard.setDescription("12345");
         testCard.setArchived(false);
-        cardService.create(cardlist_id,testCard);
-        card_id = testCard.getId();
+        cardService.create(cardListId,testCard);
+        cardId = testCard.getId();
 
         testComment = new Comment();
         testComment.setAuthor("Dex");
@@ -99,7 +99,7 @@ public class CommentServiceTest extends BaseTest{
 
     @Test
     public void create(){
-        Comment returned = commentService.create(card_id, testComment);
+        Comment returned = commentService.create(cardId, testComment);
         assertEquals(testComment, returned);
         assertAll(
                 () -> assertEquals("Dex", returned.getAuthor()),
@@ -120,7 +120,7 @@ public class CommentServiceTest extends BaseTest{
 
     @Test
     public void update(){
-        commentService.create(card_id, testComment);
+        commentService.create(cardId, testComment);
         testComment.setText("Updated");
         commentService.update(testComment);
         Comment newComment = commentService.read(testComment.getId());
@@ -134,7 +134,7 @@ public class CommentServiceTest extends BaseTest{
     @Test
     public void delete(){
         assertNull(commentService.read(testComment.getId()));
-        commentService.create(card_id, testComment);
+        commentService.create(cardId, testComment);
         assertNotNull(commentService.read(testComment.getId()));
         commentService.delete(testComment.getId());
         assertNull(commentService.read(testComment.getId()));
@@ -144,10 +144,10 @@ public class CommentServiceTest extends BaseTest{
     public void getAll(){
         List<Comment> inMemory = new ArrayList<>();
         inMemory.add(testComment);
-        commentService.create(card_id, testComment);
+        commentService.create(cardId, testComment);
         regenerateComment();
         inMemory.add(testComment);
-        commentService.create(card_id, testComment);
+        commentService.create(cardId, testComment);
         assertEquals(inMemory, commentService.getAll());
     }
 
@@ -159,7 +159,7 @@ public class CommentServiceTest extends BaseTest{
         commentService.create(first, child1);
         regenerateComment();
         regenerateCard();
-        cardService.create(cardlist_id,testCard);
+        cardService.create(cardListId,testCard);
         Card parent2 = testCard;
         UUID second = parent2.getId();
         Comment child2 = testComment;

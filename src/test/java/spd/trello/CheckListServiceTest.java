@@ -24,10 +24,10 @@ public class CheckListServiceTest extends BaseTest {
     AbstractService<CardList> cardListService = new CardListService(new CardListRepository());
     AbstractService<Card> cardService = new CardService(new CardRepository());
     AbstractService<CheckList> checkListService = new CheckListService(new CheckListRepository());
-    UUID workspace_id;
-    UUID board_id;
-    UUID cardlist_id;
-    UUID card_id;
+    UUID workspaceId;
+    UUID boardId;
+    UUID cardListId;
+    UUID cardId;
     Workspace testWorkspace;
     Board testBoard;
     CardList testCardList;
@@ -35,35 +35,35 @@ public class CheckListServiceTest extends BaseTest {
     CheckList testCheckList;
 
     @BeforeEach
-    public void objects_init()
+    public void initObjects()
     {
         testWorkspace = new Workspace();
         testWorkspace.setName("Test");
         testWorkspace.setDescription("12354");
         testWorkspace.setVisibility(WorkspaceVisibility.PRIVATE);
         workspaceService.create(null, testWorkspace);
-        workspace_id = testWorkspace.getId();
+        workspaceId = testWorkspace.getId();
 
         testBoard = new Board();
         testBoard.setName("testBoard");
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.WORKSPACE);
-        boardService.create(workspace_id,testBoard);
-        board_id = testBoard.getId();
+        boardService.create(workspaceId,testBoard);
+        boardId = testBoard.getId();
 
         testCardList = new CardList();
         testCardList.setName("firstCardList");
         testCardList.setArchived(false);
-        cardListService.create(board_id, testCardList);
-        cardlist_id = testCardList.getId();
+        cardListService.create(boardId, testCardList);
+        cardListId = testCardList.getId();
 
         testCard = new Card();
         testCard.setName("firstCard");
         testCard.setDescription("12345");
         testCard.setArchived(false);
-        cardService.create(cardlist_id,testCard);
-        card_id = testCard.getId();
+        cardService.create(cardListId,testCard);
+        cardId = testCard.getId();
 
 
         testCheckList = new CheckList();
@@ -76,7 +76,7 @@ public class CheckListServiceTest extends BaseTest {
         testCard.setName("regenerated");
         testCard.setArchived(false);
         testCard.setDescription("54321");
-        card_id = testCard.getId();
+        cardId = testCard.getId();
 
     }
 
@@ -92,14 +92,14 @@ public class CheckListServiceTest extends BaseTest {
     @AfterEach
     public void cleaner() throws SQLException {
         try(Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM checklist;DELETE FROM card;DELETE FROM cardlist; DELETE FROM board; DELETE FROM workspace");) {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM checklist;DELETE FROM card;DELETE FROM cardlist; DELETE FROM board; DELETE FROM workspace")) {
             ps.execute();
         }
     }
 
     @Test
     public void create() {
-        CheckList returned = checkListService.create(card_id, testCheckList);
+        CheckList returned = checkListService.create(cardId, testCheckList);
         assertEquals(testCheckList, returned);
         assertAll(
                 () -> assertEquals("firstCheckList", returned.getName())
@@ -118,7 +118,7 @@ public class CheckListServiceTest extends BaseTest {
 
     @Test
     public void update() {
-        CheckList checkList = checkListService.create(card_id, testCheckList);
+        CheckList checkList = checkListService.create(cardId, testCheckList);
         checkList.setName("update");
         checkListService.update(checkList);
         CheckList updated = checkListService.read(checkList.getId());
@@ -131,7 +131,7 @@ public class CheckListServiceTest extends BaseTest {
     @Test
     public void delete() {
         assertNull(checkListService.read(testCheckList.getId()));
-        checkListService.create(card_id, testCheckList);
+        checkListService.create(cardId, testCheckList);
         assertNotNull(checkListService.read(testCheckList.getId()));
         checkListService.delete(testCheckList.getId());
         assertNull(checkListService.read(testCheckList.getId()));
@@ -141,10 +141,10 @@ public class CheckListServiceTest extends BaseTest {
     public void getAll() {
         List<CheckList> inMemory = new ArrayList<>();
         inMemory.add(testCheckList);
-        checkListService.create(card_id, testCheckList);
+        checkListService.create(cardId, testCheckList);
         regenerateCheckList();
         inMemory.add(testCheckList);
-        checkListService.create(card_id, testCheckList);
+        checkListService.create(cardId, testCheckList);
         assertEquals(inMemory, checkListService.getAll());
     }
 
@@ -158,7 +158,7 @@ public class CheckListServiceTest extends BaseTest {
         checkListService.create(first, checkList1);
         regenerateCheckList();
         regenerateCard();
-        cardService.create(cardlist_id,testCard);
+        cardService.create(cardListId,testCard);
         Card card2 = testCard;
         UUID second = card2.getId();
         CheckList checkList2 = testCheckList;

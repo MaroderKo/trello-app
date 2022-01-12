@@ -23,7 +23,7 @@ public class UserServiceTest extends BaseTest {
     static User testUser;
 
     @BeforeEach
-    protected void User_init() {
+    protected void UserInit() {
         User user = new User();
         user.setFirstName("Albert");
         user.setLastName("Second");
@@ -34,7 +34,7 @@ public class UserServiceTest extends BaseTest {
     @AfterEach
     public void cleaner() throws SQLException {
         try(Connection connection = ConnectionPool.get().getConnection();
-        PreparedStatement ps = connection.prepareStatement("DELETE FROM \"user\"");) {
+        PreparedStatement ps = connection.prepareStatement("DELETE FROM \"user\"")) {
             ps.execute();
         }
     }
@@ -72,7 +72,7 @@ public class UserServiceTest extends BaseTest {
                 () -> assertEquals("Updated", newUser.getLastName()),
                 () -> assertEquals("Updated", newUser.getEmail())
         );
-    };
+    }
 
     @Test
     public void delete()
@@ -88,11 +88,11 @@ public class UserServiceTest extends BaseTest {
         List<User> inMemory = new ArrayList<>();
         inMemory.add(testUser);
         UserService.create(null, testUser);
-        User_init();
+        UserInit();
         inMemory.add(testUser);
         UserService.create(null, testUser);
         assertEquals(inMemory, UserService.getAll());
-    };
+    }
 
     @Test
     public void getParent() {
