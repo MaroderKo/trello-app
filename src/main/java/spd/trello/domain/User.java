@@ -12,6 +12,5 @@ public class User extends Domain{
     private String firstName;
     private String lastName;
     private String email;
-    private TimeZone timeZone;
 
 }
