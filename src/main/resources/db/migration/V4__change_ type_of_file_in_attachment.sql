@@ -1,2 +1,2 @@
 ALTER TABLE attachment ALTER COLUMN file DROP DEFAULT;
-ALTER TABLE attachment ALTER COLUMN file TYPE bytea USING file::bytea;
+ALTER TABLE attachment ALTER COLUMN file TYPE bytea;

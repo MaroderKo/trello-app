@@ -12,12 +12,18 @@ import java.sql.SQLException;
 
 public abstract class BaseTest {
 
+	protected static HikariDataSource dataSource;
 
 	@BeforeAll
 	public static void init() {
-		ConnectionPool.get(1);
+		HikariConfig cfg = new HikariConfig();
+		cfg.setPassword("sa");
+		cfg.setJdbcUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL");
+		cfg.setUsername("sa");
+		cfg.setDriverClassName("org.h2.Driver");
+		dataSource = new HikariDataSource(cfg);
+		ConnectionPool.setSource(dataSource);
 		Flyway flyway = Flyway.configure()
-				//.locations("classpath:migrations")
 				.dataSource(ConnectionPool.get())
 				.load();
 		flyway.migrate();
@@ -25,11 +31,8 @@ public abstract class BaseTest {
 
 	@AfterAll
 	public static void clearAll() throws SQLException {
-		ConnectionPool.get(1).getConnection().prepareStatement(
-				"DROP SCHEMA public CASCADE; " +
-						"CREATE SCHEMA public; " +
-						"GRANT ALL ON SCHEMA public TO test; " +
-						"GRANT ALL ON SCHEMA public TO public;")
+		ConnectionPool.get().getConnection().prepareStatement(
+				"DROP ALL OBJECTS")
 				.execute();
 		System.out.println("Cleared!");
 	}

@@ -12,7 +12,7 @@ CREATE TABLE workspace
 CREATE TABLE board
 (
     id           UUID PRIMARY KEY               NOT NULL,
-    workspace_id UUID REFERENCES workspace (id) NOT NULL,
+    workspace_id UUID REFERENCES workspace (id),
     updated_by   VARCHAR(25)                             DEFAULT '',
     created_by   VARCHAR(25)                    NOT NULL DEFAULT '',
     created_date TIMESTAMP                      NOT NULL DEFAULT now(),
@@ -26,7 +26,7 @@ CREATE TABLE board
 CREATE TABLE cardlist
 (
     id           UUID PRIMARY KEY           NOT NULL,
-    board_id     UUID REFERENCES board (id) NOT NULL,
+    board_id     UUID REFERENCES board (id),
     updated_by   VARCHAR(25)                         DEFAULT '',
     created_by   VARCHAR(25)                NOT NULL DEFAULT '',
     created_date TIMESTAMP                  NOT NULL DEFAULT now(),
@@ -39,7 +39,7 @@ CREATE TABLE cardlist
 CREATE TABLE card
 (
     id           UUID PRIMARY KEY              NOT NULL,
-    cardlist_id  UUID REFERENCES cardlist (id) NOT NULL,
+    cardlist_id  UUID REFERENCES cardlist (id),
     updated_by   VARCHAR(25)                            DEFAULT '',
     created_by   VARCHAR(25)                   NOT NULL DEFAULT '',
     created_date TIMESTAMP                     NOT NULL DEFAULT now(),
@@ -87,7 +87,7 @@ CREATE TABLE checklist
 CREATE TABLE checkable_item
 (
     id           UUID PRIMARY KEY               NOT NULL,
-    checklist_id UUID REFERENCES checklist (id) NOT NULL,
+    checklist_id UUID REFERENCES checklist (id),
     name         VARCHAR(20)                    NOT NULL DEFAULT '',
     checked      bool                                    DEFAULT FALSE
 );
@@ -109,7 +109,7 @@ create table reminder
 (
 
     id           UUID        NOT NULL PRIMARY KEY,
-    card_id      UUID        NOT NULL REFERENCES card (id),
+    card_id      UUID        REFERENCES card (id),
     updated_by   VARCHAR(25)          DEFAULT '',
     created_by   VARCHAR(25) NOT NULL DEFAULT '',
     created_date TIMESTAMP   NOT NULL DEFAULT now(),
@@ -124,7 +124,7 @@ create table reminder
 CREATE TABLE "user"
 (
     id        UUID PRIMARY KEY,
-    timezone  TIMESTAMPtz NOT NULL,
+    timezone  TIMESTAMP NOT NULL,
     firstname VARCHAR(25) NOT NULL,
     lastname  VARCHAR(25) NOT NULL,
     email     VARCHAR(25) NOT NULL

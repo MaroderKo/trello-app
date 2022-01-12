@@ -15,7 +15,7 @@ public class ConnectionPool {
     public static DataSource get() {
         if (source == null) {
             try {
-                source = createDataSource(0);
+                source = createDataSource();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -24,34 +24,14 @@ public class ConnectionPool {
         return source;
 
     }
-    public static DataSource get(int i) {
-        if (source == null) {
-            try {
-                source = createDataSource(1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return source;
-
-    }
 
 
-    private static DataSource createDataSource(int i) throws IOException {
+    private static DataSource createDataSource() throws IOException {
         Properties properties = loadProperties();
         HikariConfig cfg = new HikariConfig();
-        if (i == 0) {
             cfg.setJdbcUrl(properties.getProperty("jdbc.url"));
             cfg.setUsername(properties.getProperty("jdbc.username"));
             cfg.setPassword(properties.getProperty("jdbc.password"));
-        }
-        else
-        {
-            cfg.setJdbcUrl(properties.getProperty("jdbc.test.url"));
-            cfg.setUsername(properties.getProperty("jdbc.test.username"));
-            cfg.setPassword(properties.getProperty("jdbc.test.password"));
-        }
         cfg.setDriverClassName("org.postgresql.Driver");
 
 
