@@ -1,12 +1,12 @@
 package spd.trello.service;
 
 import spd.trello.domain.CheckableItem;
-import spd.trello.repository.IRepository;
+import spd.trello.repository.AbstractRepository;
 
 
 public class CheckableItemService extends AbstractService<CheckableItem>{
 
-    public CheckableItemService(IRepository<CheckableItem> repository) {
+    public CheckableItemService(AbstractRepository<CheckableItem> repository) {
         super(repository);
     }
 

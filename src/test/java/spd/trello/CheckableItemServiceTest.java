@@ -1,17 +1,12 @@
 package spd.trello;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import spd.trello.db.ConnectionPool;
+import org.springframework.dao.DataIntegrityViolationException;
 import spd.trello.domain.*;
 import spd.trello.repository.*;
 import spd.trello.service.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,11 +19,6 @@ public class CheckableItemServiceTest extends BaseTest {
     AbstractService<Card> cardService = new CardService(new CardRepository());
     AbstractService<CheckList> checkListService = new CheckListService(new CheckListRepository());
     AbstractService<CheckableItem> checkableItemService = new CheckableItemService(new CheckableItemRepository());
-    UUID workspaceId;
-    UUID boardId;
-    UUID cardListId;
-    UUID cardId;
-    UUID checklistId;
     Workspace testWorkspace;
     Board testBoard;
     CardList testCardList;
@@ -43,39 +33,40 @@ public class CheckableItemServiceTest extends BaseTest {
         testWorkspace.setName("Test");
         testWorkspace.setDescription("12354");
         testWorkspace.setVisibility(WorkspaceVisibility.PRIVATE);
-        workspaceService.create(null, testWorkspace);
-        workspaceId = testWorkspace.getId();
+        workspaceService.create(testWorkspace);
 
         testBoard = new Board();
         testBoard.setName("testBoard");
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.WORKSPACE);
-        boardService.create(workspaceId,testBoard);
-        boardId = testBoard.getId();
+        testBoard.setWorkspaceId(testWorkspace.getId());
+        boardService.create(testBoard);
+
 
         testCardList = new CardList();
         testCardList.setName("firstCardList");
         testCardList.setArchived(false);
-        cardListService.create(boardId, testCardList);
-        cardListId = testCardList.getId();
+        testCardList.setBoardId(testBoard.getId());
+        cardListService.create(testCardList);
 
         testCard = new Card();
         testCard.setName("firstCard");
         testCard.setDescription("12345");
         testCard.setArchived(false);
-        cardService.create(cardListId,testCard);
-        cardId = testCard.getId();
+        testCard.setCardlistId(testCardList.getId());
+        cardService.create(testCard);
 
 
         testCheckList = new CheckList();
         testCheckList.setName("firstCheckList");
-        checkListService.create(cardId, testCheckList);
-        checklistId = testCheckList.getId();
+        testCheckList.setCardId(testCard.getId());
+        checkListService.create(testCheckList);
 
         testCheckableItem = new CheckableItem();
         testCheckableItem.setName("firstCheckableItem");
         testCheckableItem.setChecked(false);
+        testCheckableItem.setChecklistId(testCheckList.getId());
 
     }
 
@@ -83,29 +74,23 @@ public class CheckableItemServiceTest extends BaseTest {
         testCheckableItem = new CheckableItem();
         testCheckableItem.setName("regenerated");
         testCheckableItem.setChecked(true);
+        testCheckableItem.setChecklistId(testCheckList.getId());
 
     }
 
     private void regenerateCheckList() {
         testCheckList = new CheckList();
         testCheckList.setName("regenerated");
+        testCheckList.setCardId(testCard.getId());
 
     }
 
 
 
-
-    @AfterEach
-    public void cleaner() throws SQLException {
-        try(Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM checkable_item;DELETE FROM checklist;DELETE FROM card;DELETE FROM cardlist; DELETE FROM board; DELETE FROM workspace")) {
-            ps.execute();
-        }
-    }
 
     @Test
     public void create() {
-        CheckableItem returned = checkableItemService.create(checklistId, testCheckableItem);
+        CheckableItem returned = checkableItemService.create(testCheckableItem);
         assertEquals(testCheckableItem, returned);
         assertAll(
                 () -> assertEquals("firstCheckableItem", returned.getName())
@@ -119,12 +104,13 @@ public class CheckableItemServiceTest extends BaseTest {
 
     @Test
     public void createWithIllegalId() {
-        assertNull(checkableItemService.create(UUID.randomUUID(), testCheckableItem));
+        testCheckableItem.setChecklistId(UUID.randomUUID());
+        assertThrows(DataIntegrityViolationException.class,() -> checkableItemService.create(testCheckableItem));
     }
 
     @Test
     public void update() {
-        CheckableItem checkableItem = checkableItemService.create(checklistId, testCheckableItem);
+        CheckableItem checkableItem = checkableItemService.create(testCheckableItem);
         checkableItem.setName("update");
         checkableItemService.update(checkableItem);
         CheckableItem updated = checkableItemService.read(checkableItem.getId());
@@ -137,7 +123,7 @@ public class CheckableItemServiceTest extends BaseTest {
     @Test
     public void delete() {
         assertNull(checkableItemService.read(testCheckableItem.getId()));
-        checkableItemService.create(checklistId, testCheckableItem);
+        checkableItemService.create(testCheckableItem);
         assertNotNull(checkableItemService.read(testCheckableItem.getId()));
         checkableItemService.delete(testCheckableItem.getId());
         assertNull(checkableItemService.read(testCheckableItem.getId()));
@@ -145,12 +131,12 @@ public class CheckableItemServiceTest extends BaseTest {
 
     @Test
     public void getAll() {
-        List<CheckableItem> inMemory = new ArrayList<>();
+        List<CheckableItem> inMemory = checkableItemService.getAll();
         inMemory.add(testCheckableItem);
-        checkableItemService.create(checklistId, testCheckableItem);
+        checkableItemService.create(testCheckableItem);
         regenerateCheckableItem();
         inMemory.add(testCheckableItem);
-        checkableItemService.create(checklistId, testCheckableItem);
+        checkableItemService.create(testCheckableItem);
         assertEquals(inMemory, checkableItemService.getAll());
     }
 
@@ -161,14 +147,14 @@ public class CheckableItemServiceTest extends BaseTest {
         CheckList checkList1 = testCheckList;
         UUID first = checkList1.getId();
         CheckableItem checkableItem1 = testCheckableItem;
-        checkableItemService.create(first, checkableItem1);
+        checkableItemService.create(checkableItem1);
         regenerateCheckList();
         regenerateCheckableItem();
-        checkListService.create(cardId,testCheckList);
+        checkListService.create(testCheckList);
         CheckList checkList2 = testCheckList;
         UUID second = checkList2.getId();
         CheckableItem checkableItem2 = testCheckableItem;
-        checkableItemService.create(second, checkableItem2);
+        checkableItemService.create(checkableItem2);
 
         assertAll(
                 () -> assertEquals(List.of(checkableItem1), checkableItemService.getParent(first)),
@@ -180,6 +166,6 @@ public class CheckableItemServiceTest extends BaseTest {
 
     @Test
     public void getParentWithIllegalId() {
-        assertEquals(checkableItemService.getParent(UUID.randomUUID()), new ArrayList<>());
+        assertTrue(checkableItemService.getParent(UUID.randomUUID()).isEmpty());
     }
 }

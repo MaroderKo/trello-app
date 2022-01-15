@@ -10,9 +10,6 @@ import spd.trello.repository.WorkspaceRepository;
 import spd.trello.service.AbstractService;
 import spd.trello.service.WorkspaceService;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,17 +29,10 @@ public class WorkspaceServiceTest extends BaseTest {
         testWorkspace = workspace;
     }
 
-    @AfterEach
-    public void cleaner() throws SQLException {
-        try(Connection connection = ConnectionPool.get().getConnection();
-        PreparedStatement ps = connection.prepareStatement("DELETE FROM workspace")) {
-            ps.execute();
-        }
-    }
 
     @Test
     public void create() {
-        Workspace returned = workspaceService.create(null, testWorkspace);
+        Workspace returned = workspaceService.create(testWorkspace);
         assertEquals(testWorkspace, returned);
         assertAll(
                 () -> assertEquals("Test", returned.getName()),
@@ -53,15 +43,13 @@ public class WorkspaceServiceTest extends BaseTest {
     }
 
     @Test
-    public void readNotExisted()
-    {
+    public void readNotExisted() {
         assertNull(workspaceService.read(UUID.randomUUID()));
     }
 
     @Test
-    public void update()
-    {
-        workspaceService.create(null, testWorkspace);
+    public void update() {
+        workspaceService.create(testWorkspace);
         testWorkspace.setName("Updated");
         testWorkspace.setDescription("Updated");
         testWorkspace.setVisibility(WorkspaceVisibility.PUBLIC);
@@ -78,28 +66,26 @@ public class WorkspaceServiceTest extends BaseTest {
     }
 
     @Test
-    public void delete()
-    {
-        workspaceService.create(null,testWorkspace);
+    public void delete() {
+        workspaceService.create(testWorkspace);
         workspaceService.delete(testWorkspace.getId());
         assertNull(workspaceService.read(testWorkspace.getId()));
     }
 
     @Test
-    public void getAll()
-    {
-        List<Workspace> inMemory = new ArrayList<>();
+    public void getAll() {
+        List<Workspace> inMemory = workspaceService.getAll();
         inMemory.add(testWorkspace);
-        workspaceService.create(null, testWorkspace);
+        workspaceService.create(testWorkspace);
         workspaceInit();
         inMemory.add(testWorkspace);
-        workspaceService.create(null, testWorkspace);
+        workspaceService.create(testWorkspace);
         assertEquals(inMemory, workspaceService.getAll());
     }
 
     @Test
     public void getParent() {
-        assertNull(workspaceService.getParent(UUID.randomUUID()));
+        assertTrue(workspaceService.getParent(UUID.randomUUID()).isEmpty());
     }
 
 }

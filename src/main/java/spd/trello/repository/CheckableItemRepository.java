@@ -1,139 +1,52 @@
 package spd.trello.repository;
 
-import spd.trello.db.ConnectionPool;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import spd.trello.domain.CheckableItem;
 
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CheckableItemRepository implements IRepository<CheckableItem> {
+public class CheckableItemRepository extends AbstractRepository<CheckableItem> {
     @Override
-    public CheckableItem create(UUID parent, CheckableItem checkableItem) {
-        try (
-                Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("INSERT INTO checkable_item (id, checklist_id, name, checked) VALUES (?, ?, ?, ?);")) {
-
-            ps.setObject(1, checkableItem.getId(), Types.OTHER);
-            ps.setObject(2, parent, Types.OTHER);
-            ps.setString(3, checkableItem.getName());
-            ps.setBoolean(4, checkableItem.getChecked());
-
-            ps.execute();
-
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
+    public CheckableItem create(CheckableItem checkableItem) {
+        jdbcTemplate.update("INSERT INTO checkable_item (id, checklist_id, name, checked) VALUES (?, ?, ?, ?);",
+                checkableItem.getId(),
+                checkableItem.getChecklistId(),
+                checkableItem.getName(),
+                checkableItem.getChecked());
         return getById(checkableItem.getId());
     }
 
     @Override
     public CheckableItem update(CheckableItem checkableItem) {
-        try (
-                Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("UPDATE checkable_item SET name = ?, checked = ? WHERE id = '" + checkableItem.getId() + "';")) {
-
-            ps.setString(1, checkableItem.getName());
-            ps.setBoolean(2, checkableItem.getChecked());
-
-            ps.execute();
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-
+        jdbcTemplate.update("UPDATE checkable_item SET name = ?, checked = ? WHERE id = ?",
+                checkableItem.getName(),
+                checkableItem.getChecked(),
+                checkableItem.getId());
         return getById(checkableItem.getId());
     }
 
     @Override
     public void delete(UUID uuid) {
-        try (
-                Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("DELETE FROM checkable_item WHERE id = '" + uuid + "';")) {
-            ps.execute();
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-
+        jdbcTemplate.update("DELETE FROM checkable_item WHERE id = ?", uuid);
     }
 
     @Override
     public CheckableItem getById(UUID uuid) {
-        CheckableItem CheckableItem = null;
-        try (
-                Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM checkable_item WHERE id = '" + uuid.toString() + "';")) {
+        return jdbcTemplate.query("SELECT * FROM checkable_item WHERE id = ?", new BeanPropertyRowMapper<>(CheckableItem.class),uuid).stream().findFirst().orElse(null);
 
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                CheckableItem = new CheckableItem();
-                CheckableItem.setId(UUID.fromString(rs.getString("id")));
-                CheckableItem.setName(rs.getString("name"));
-                CheckableItem.setChecked(rs.getBoolean("checked"));
-            }
-
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-        return CheckableItem;
     }
 
     @Override
     public List<CheckableItem> getAll() {
-        List<CheckableItem> CheckableItems = new ArrayList<>();
-        try (
-                Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM checkable_item")) {
 
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                CheckableItem CheckableItem = new CheckableItem();
-                CheckableItem.setId(UUID.fromString(rs.getString("id")));
-                CheckableItem.setName(rs.getString("name"));
-                CheckableItem.setChecked(rs.getBoolean("checked"));
-                CheckableItems.add(CheckableItem);
-            }
-
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-        return CheckableItems;
+        return jdbcTemplate.query("SELECT * FROM checkable_item", new BeanPropertyRowMapper<>(CheckableItem.class));
     }
 
     @Override
-    public List<CheckableItem> getParrent(UUID id) {
-        List<CheckableItem> CheckableItems = new ArrayList<>();
-        try (
-                Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM checkable_item WHERE checklist_id = '" + id.toString() + "';")) {
+    public List<CheckableItem> getParent(UUID id) {
+        return jdbcTemplate.query("SELECT * FROM checkable_item WHERE checklist_id = ?", new BeanPropertyRowMapper<>(CheckableItem.class), id);
 
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                CheckableItem CheckableItem = new CheckableItem();
-                CheckableItem.setId(UUID.fromString(rs.getString("id")));
-                CheckableItem.setName(rs.getString("name"));
-                CheckableItem.setChecked(rs.getBoolean("checked"));
-                CheckableItems.add(CheckableItem);
-            }
-
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-        return CheckableItems;
     }
 
 }

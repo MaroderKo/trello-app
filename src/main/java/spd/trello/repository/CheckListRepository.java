@@ -1,5 +1,6 @@
 package spd.trello.repository;
 
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import spd.trello.db.ConnectionPool;
 import spd.trello.domain.CheckList;
 
@@ -12,159 +13,49 @@ import java.util.UUID;
 import static spd.trello.repository.RepositoryUtil.toLocalDateTime;
 
 
-public class CheckListRepository implements IRepository<CheckList> {
+public class CheckListRepository extends AbstractRepository<CheckList> {
     @Override
-    public CheckList create(UUID parent, CheckList checkList) {
-        try (
-                Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("INSERT INTO CheckList (id,card_id, updated_by, created_by, created_date, updated_date, name) VALUES (?, ?, ?, ?, ?, ?, ?);")) {
-
-            ps.setObject(1, checkList.getId(), Types.OTHER);
-            ps.setObject(2, parent, Types.OTHER);
-            ps.setObject(3, checkList.getUpdatedBy() == null ? null : checkList.getUpdatedBy());
-            ps.setString(4, checkList.getCreatedBy());
-            ps.setObject(5, Timestamp.valueOf(checkList.getCreatedDate()), Types.TIMESTAMP);
-            ps.setObject(6, checkList.getUpdatedDate() == null ? null : Timestamp.valueOf(checkList.getUpdatedDate()), Types.TIMESTAMP);
-            ps.setString(7, checkList.getName());
-
-            ps.execute();
-
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
+    public CheckList create(CheckList checkList) {
+        jdbcTemplate.update("INSERT INTO CheckList (id,card_id, updated_by, created_by, created_date, updated_date, name) VALUES (?, ?, ?, ?, ?, ?, ?);",
+                checkList.getId(),
+                checkList.getCardId(),
+                checkList.getUpdatedBy(),
+                checkList.getCreatedBy(),
+                checkList.getCreatedDate(),
+                checkList.getUpdatedDate(),
+                checkList.getName());
         return getById(checkList.getId());
     }
 
     @Override
     public CheckList update(CheckList checkList) {
         checkList.setUpdatedDate(LocalDateTime.now());
-        try (
-                Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("UPDATE CheckList SET updated_by = ?, updated_date = ?, name = ? WHERE id = '" + checkList.getId() + "';")) {
-
-
-            ps.setObject(1, checkList.getUpdatedBy() == null ? null : checkList.getUpdatedBy());
-            ps.setObject(2, checkList.getUpdatedDate() == null ? null : Timestamp.valueOf(checkList.getUpdatedDate()), Types.TIMESTAMP);
-            ps.setString(3, checkList.getName());
-
-            ps.execute();
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-
+        jdbcTemplate.update("UPDATE CheckList SET updated_by = ?, updated_date = ?, name = ? WHERE id = ?",
+                checkList.getUpdatedBy(),
+                checkList.getUpdatedDate(),
+                checkList.getName(),
+                checkList.getId());
         return getById(checkList.getId());
     }
 
     @Override
     public void delete(UUID uuid) {
-        try (
-                Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("DELETE FROM CheckList WHERE id = '" + uuid + "';")) {
-            ps.execute();
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-
+        jdbcTemplate.update("DELETE FROM CheckList WHERE id = ?", uuid);
     }
 
     @Override
     public CheckList getById(UUID uuid) {
-        CheckList checkList = null;
-        try (
-                Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM checklist WHERE id = '" + uuid.toString() + "';")) {
-
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                checkList = new CheckList();
-                checkList.setId(UUID.fromString(rs.getString("id")));
-                if (rs.getString("updated_by") != null) {
-                    checkList.setUpdatedBy(rs.getString("updated_by"));
-                }
-                checkList.setCreatedBy(rs.getString("created_by"));
-                checkList.setCreatedDate(toLocalDateTime(rs.getString("created_date")));
-                if (rs.getString("updated_date") != null) {
-                    checkList.setUpdatedDate(toLocalDateTime(rs.getString("updated_date")));
-                }
-                checkList.setName(rs.getString("name"));
-            }
-
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-        return checkList;
+        return jdbcTemplate.query("SELECT * FROM checklist WHERE id = ?", new BeanPropertyRowMapper<>(CheckList.class),uuid).stream().findFirst().orElse(null);
     }
 
     @Override
     public List<CheckList> getAll() {
-        List<CheckList> checkLists = new ArrayList<>();
-        try (
-                Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM CheckList")) {
-
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                CheckList checkList = new CheckList();
-                checkList.setId(UUID.fromString(rs.getString("id")));
-                if (rs.getString("updated_by") != null) {
-                    checkList.setUpdatedBy(rs.getString("updated_by"));
-                }
-                checkList.setCreatedBy(rs.getString("created_by"));
-                checkList.setCreatedDate(toLocalDateTime(rs.getString("created_date")));
-                if (rs.getString("updated_date") != null) {
-                    checkList.setUpdatedDate(toLocalDateTime(rs.getString("updated_date")));
-                }
-                checkList.setName(rs.getString("name"));
-                checkLists.add(checkList);
-            }
-
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-        return checkLists;
+       return jdbcTemplate.query("SELECT * FROM CheckList", new BeanPropertyRowMapper<>(CheckList.class));
     }
 
     @Override
-    public List<CheckList> getParrent(UUID id) {
-        List<CheckList> checkLists = new ArrayList<>();
-        try (
-                Connection connection = ConnectionPool.get().getConnection();
-                PreparedStatement ps = connection.prepareStatement("SELECT * FROM CheckList WHERE card_id = '" + id.toString() + "';")) {
-
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                CheckList checkList = new CheckList();
-                checkList.setId(UUID.fromString(rs.getString("id")));
-                if (rs.getString("updated_by") != null) {
-                    checkList.setUpdatedBy(rs.getString("updated_by"));
-                }
-                checkList.setCreatedBy(rs.getString("created_by"));
-                checkList.setCreatedDate(toLocalDateTime(rs.getString("created_date")));
-                if (rs.getString("updated_date") != null) {
-                    checkList.setUpdatedDate(toLocalDateTime(rs.getString("updated_date")));
-                }
-                checkList.setName(rs.getString("name"));
-                checkLists.add(checkList);
-            }
-
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-        return checkLists;
+    public List<CheckList> getParent(UUID id) {
+        return jdbcTemplate.query("SELECT * FROM CheckList WHERE card_id = ?", new BeanPropertyRowMapper<>(CheckList.class),id);
     }
 
 }

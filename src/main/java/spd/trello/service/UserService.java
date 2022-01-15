@@ -1,10 +1,10 @@
 package spd.trello.service;
 
 import spd.trello.domain.User;
-import spd.trello.repository.IRepository;
+import spd.trello.repository.AbstractRepository;
 
 public class UserService extends AbstractService<User>{
-    public UserService(IRepository<User> repository) {
+    public UserService(AbstractRepository<User> repository) {
         super(repository);
     }
 

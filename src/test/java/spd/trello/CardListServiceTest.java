@@ -1,9 +1,8 @@
 package spd.trello;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import spd.trello.db.ConnectionPool;
+import org.springframework.dao.DataIntegrityViolationException;
 import spd.trello.domain.*;
 import spd.trello.repository.BoardRepository;
 import spd.trello.repository.CardListRepository;
@@ -13,9 +12,6 @@ import spd.trello.service.BoardService;
 import spd.trello.service.CardListService;
 import spd.trello.service.WorkspaceService;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -27,8 +23,6 @@ public class CardListServiceTest extends BaseTest {
     AbstractService<Workspace> workspaceService = new WorkspaceService(new WorkspaceRepository());
     AbstractService<Board> boardService = new BoardService(new BoardRepository());
     AbstractService<CardList> cardListService = new CardListService(new CardListRepository());
-    UUID workspaceId;
-    UUID boardId;
     Workspace testWorkspace;
     Board testBoard;
     CardList testCardList;
@@ -40,8 +34,7 @@ public class CardListServiceTest extends BaseTest {
         testWorkspace.setName("Test");
         testWorkspace.setDescription("12354");
         testWorkspace.setVisibility(WorkspaceVisibility.PRIVATE);
-        workspaceService.create(null, testWorkspace);
-        workspaceId = testWorkspace.getId();
+        workspaceService.create(testWorkspace);
 
 
         testBoard = new Board();
@@ -49,12 +42,13 @@ public class CardListServiceTest extends BaseTest {
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.WORKSPACE);
-        boardService.create(workspaceId,testBoard);
-        boardId = testBoard.getId();
+        testBoard.setWorkspaceId(testWorkspace.getId());
+        boardService.create(testBoard);
 
         testCardList = new CardList();
         testCardList.setName("firstCardList");
         testCardList.setArchived(false);
+        testCardList.setBoardId(testBoard.getId());
     }
 
     private void regenerateBoard() {
@@ -63,7 +57,7 @@ public class CardListServiceTest extends BaseTest {
         testBoard.setArchived(false);
         testBoard.setDescription("54321");
         testBoard.setVisibility(BoardVisibility.PUBLIC);
-        boardId = testBoard.getId();
+        testBoard.setWorkspaceId(testWorkspace.getId());
 
     }
 
@@ -71,23 +65,17 @@ public class CardListServiceTest extends BaseTest {
         testCardList = new CardList();
         testCardList.setName("regenerated");
         testCardList.setArchived(true);
-
+        testCardList.setBoardId(testBoard.getId());
+        testCardList.setBoardId(testBoard.getId());
     }
 
 
 
 
-    @AfterEach
-    public void cleaner() throws SQLException {
-        try(Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM cardlist; DELETE FROM board; DELETE FROM workspace")) {
-            ps.execute();
-        }
-    }
 
     @Test
     public void create() {
-        CardList returned = cardListService.create(boardId, testCardList);
+        CardList returned = cardListService.create(testCardList);
         assertEquals(testCardList, returned);
         assertAll(
                 () -> assertEquals("firstCardList", returned.getName()),
@@ -102,12 +90,13 @@ public class CardListServiceTest extends BaseTest {
 
     @Test
     public void createWithIllegalId() {
-        assertNull(cardListService.create(UUID.randomUUID(), testCardList));
+        testCardList.setBoardId(UUID.randomUUID());
+        assertThrows(DataIntegrityViolationException.class,() -> cardListService.create(testCardList));
     }
 
     @Test
     public void update() {
-        CardList cardList = cardListService.create(boardId, testCardList);
+        CardList cardList = cardListService.create(testCardList);
         cardList.setName("update");
         cardList.setArchived(true);
         cardListService.update(cardList);
@@ -122,7 +111,7 @@ public class CardListServiceTest extends BaseTest {
     @Test
     public void delete() {
         assertNull(cardListService.read(testCardList.getId()));
-        cardListService.create(boardId, testCardList);
+        cardListService.create(testCardList);
         assertNotNull(cardListService.read(testCardList.getId()));
         cardListService.delete(testCardList.getId());
         assertNull(cardListService.read(testCardList.getId()));
@@ -130,12 +119,12 @@ public class CardListServiceTest extends BaseTest {
 
     @Test
     public void getAll() {
-        List<CardList> inMemory = new ArrayList<>();
+        List<CardList> inMemory = cardListService.getAll();
         inMemory.add(testCardList);
-        cardListService.create(boardId, testCardList);
+        cardListService.create(testCardList);
         regenerateCardList();
         inMemory.add(testCardList);
-        cardListService.create(boardId, testCardList);
+        cardListService.create(testCardList);
         assertEquals(inMemory, cardListService.getAll());
     }
 
@@ -146,14 +135,14 @@ public class CardListServiceTest extends BaseTest {
         Board board1 = testBoard;
         UUID first = board1.getId();
         CardList cardList1 = testCardList;
-        cardListService.create(first, cardList1);
+        cardListService.create(cardList1);
         regenerateBoard();
         regenerateCardList();
-        boardService.create(workspaceId,testBoard);
+        boardService.create(testBoard);
         Board board2 = testBoard;
         UUID second = board2.getId();
         CardList cardList2 = testCardList;
-        cardListService.create(second, cardList2);
+        cardListService.create(cardList2);
 
         assertAll(
                 () -> assertEquals(List.of(cardList1), cardListService.getParent(first)),
@@ -165,6 +154,6 @@ public class CardListServiceTest extends BaseTest {
 
     @Test
     public void getParentWithIllegalId() {
-        assertEquals(cardListService.getParent(UUID.randomUUID()), new ArrayList<>());
+        assertTrue(cardListService.getParent(UUID.randomUUID()).isEmpty());
     }
 }

@@ -1,25 +1,19 @@
 package spd.trello;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import spd.trello.db.ConnectionPool;
 import spd.trello.domain.User;
 import spd.trello.repository.UserRepository;
 import spd.trello.service.AbstractService;
 import spd.trello.service.UserService;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTest extends BaseTest {
-    static AbstractService<User> UserService = new UserService(new UserRepository());
+    static AbstractService<User> userService = new UserService(new UserRepository());
     static User testUser;
 
     @BeforeEach
@@ -31,17 +25,9 @@ public class UserServiceTest extends BaseTest {
         testUser = user;
     }
 
-    @AfterEach
-    public void cleaner() throws SQLException {
-        try(Connection connection = ConnectionPool.get().getConnection();
-        PreparedStatement ps = connection.prepareStatement("DELETE FROM \"user\"")) {
-            ps.execute();
-        }
-    }
-
     @Test
     public void create() {
-        User returned = UserService.create(null, testUser);
+        User returned = userService.create(testUser);
         assertEquals(testUser, returned);
         assertAll(
                 () -> assertEquals("Albert", returned.getFirstName()),
@@ -54,18 +40,18 @@ public class UserServiceTest extends BaseTest {
     @Test
     public void readNotExisted()
     {
-        assertNull(UserService.read(UUID.randomUUID()));
+        assertNull(userService.read(UUID.randomUUID()));
     }
 
     @Test
     public void update()
     {
-        UserService.create(null, testUser);
+        userService.create(testUser);
         testUser.setFirstName("Updated");
         testUser.setLastName("Updated");
         testUser.setEmail("Updated");
-        UserService.update(testUser);
-        User newUser = UserService.read(testUser.getId());
+        userService.update(testUser);
+        User newUser = userService.read(testUser.getId());
         assertEquals(testUser, newUser);
         assertAll(
                 () -> assertEquals("Updated", newUser.getFirstName()),
@@ -77,26 +63,26 @@ public class UserServiceTest extends BaseTest {
     @Test
     public void delete()
     {
-        UserService.create(null,testUser);
-        UserService.delete(testUser.getId());
-        assertNull(UserService.read(testUser.getId()));
+        userService.create(testUser);
+        userService.delete(testUser.getId());
+        assertNull(userService.read(testUser.getId()));
     }
 
     @Test
     public void getAll()
     {
-        List<User> inMemory = new ArrayList<>();
+        List<User> inMemory = userService.getAll();
         inMemory.add(testUser);
-        UserService.create(null, testUser);
+        userService.create(testUser);
         UserInit();
         inMemory.add(testUser);
-        UserService.create(null, testUser);
-        assertEquals(inMemory, UserService.getAll());
+        userService.create(testUser);
+        assertEquals(inMemory, userService.getAll());
     }
 
     @Test
     public void getParent() {
-        assertNull(UserService.getParent(UUID.randomUUID()));
+        assertTrue(userService.getParent(UUID.randomUUID()).isEmpty());
     }
 
 }

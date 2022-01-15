@@ -29,11 +29,4 @@ public abstract class BaseTest {
 		flyway.migrate();
 	}
 
-	@AfterAll
-	public static void clearAll() throws SQLException {
-		ConnectionPool.get().getConnection().prepareStatement(
-				"DROP ALL OBJECTS")
-				.execute();
-		System.out.println("Cleared!");
-	}
 }

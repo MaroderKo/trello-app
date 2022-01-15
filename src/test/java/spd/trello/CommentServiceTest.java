@@ -1,16 +1,13 @@
 package spd.trello;
 
-import org.junit.jupiter.api.AfterEach;
+import org.h2.message.DbException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import spd.trello.db.ConnectionPool;
+import org.springframework.dao.DataIntegrityViolationException;
 import spd.trello.domain.*;
 import spd.trello.repository.*;
 import spd.trello.service.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,10 +20,6 @@ public class CommentServiceTest extends BaseTest{
     AbstractService<CardList> cardListService = new CardListService(new CardListRepository());
     AbstractService<Card> cardService = new CardService(new CardRepository());
     AbstractService<Comment> commentService = new CommentService(new CommentRepository());
-    UUID workspaceId;
-    UUID boardId;
-    UUID cardListId;
-    UUID cardId;
     Workspace testWorkspace;
     Board testBoard;
     CardList testCardList;
@@ -41,34 +34,34 @@ public class CommentServiceTest extends BaseTest{
         testWorkspace.setName("Test");
         testWorkspace.setDescription("12354");
         testWorkspace.setVisibility(WorkspaceVisibility.PRIVATE);
-        workspaceService.create(null, testWorkspace);
-        workspaceId = testWorkspace.getId();
+        workspaceService.create(testWorkspace);
 
         testBoard = new Board();
         testBoard.setName("testBoard");
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.WORKSPACE);
-        boardService.create(workspaceId,testBoard);
-        boardId = testBoard.getId();
+        testBoard.setWorkspaceId(testWorkspace.getId());
+        boardService.create(testBoard);
 
         testCardList = new CardList();
         testCardList.setName("firstCardList");
         testCardList.setArchived(false);
-        cardListService.create(boardId, testCardList);
-        cardListId = testCardList.getId();
+        testCardList.setBoardId(testBoard.getId());
+        cardListService.create(testCardList);
 
         testCard = new Card();
         testCard.setName("firstCard");
         testCard.setDescription("12345");
         testCard.setArchived(false);
-        cardService.create(cardListId,testCard);
-        cardId = testCard.getId();
+        testCard.setCardlistId(testCardList.getId());
+        cardService.create(testCard);
 
         testComment = new Comment();
         testComment.setAuthor("Dex");
         testComment.setArchived(false);
         testComment.setText("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium.");
+        testComment.setCardId(testCard.getId());
 
 
     }
@@ -78,6 +71,7 @@ public class CommentServiceTest extends BaseTest{
         testComment.setAuthor("Dex");
         testComment.setArchived(false);
         testComment.setText("One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his bed into a horrible vermin. He lay on his armour-like back, and if he lifted his head a little he could see his brown belly, slightly domed and divided by a");
+        testComment.setCardId(testCard.getId());
 
     }
 
@@ -87,19 +81,12 @@ public class CommentServiceTest extends BaseTest{
         testCard.setName("regenerated");
         testCard.setDescription("54321");
         testCard.setArchived(false);
-    }
-
-    @AfterEach
-    public void cleaner() throws SQLException {
-        try(Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM comment;DELETE FROM card;DELETE FROM cardlist; DELETE FROM board; DELETE FROM workspace")) {
-            ps.execute();
-        }
+        testCard.setCardlistId(testCardList.getId());
     }
 
     @Test
     public void create(){
-        Comment returned = commentService.create(cardId, testComment);
+        Comment returned = commentService.create(testComment);
         assertEquals(testComment, returned);
         assertAll(
                 () -> assertEquals("Dex", returned.getAuthor()),
@@ -115,12 +102,13 @@ public class CommentServiceTest extends BaseTest{
 
     @Test
     public void createWithIllegalId() {
-        assertNull(commentService.create(UUID.randomUUID(), testComment));
+        testComment.setCardId(UUID.randomUUID());
+        assertThrows(DataIntegrityViolationException.class,() -> commentService.create(testComment));
     }
 
     @Test
     public void update(){
-        commentService.create(cardId, testComment);
+        commentService.create(testComment);
         testComment.setText("Updated");
         commentService.update(testComment);
         Comment newComment = commentService.read(testComment.getId());
@@ -134,7 +122,7 @@ public class CommentServiceTest extends BaseTest{
     @Test
     public void delete(){
         assertNull(commentService.read(testComment.getId()));
-        commentService.create(cardId, testComment);
+        commentService.create(testComment);
         assertNotNull(commentService.read(testComment.getId()));
         commentService.delete(testComment.getId());
         assertNull(commentService.read(testComment.getId()));
@@ -142,12 +130,12 @@ public class CommentServiceTest extends BaseTest{
 
     @Test
     public void getAll(){
-        List<Comment> inMemory = new ArrayList<>();
+        List<Comment> inMemory = commentService.getAll();
         inMemory.add(testComment);
-        commentService.create(cardId, testComment);
+        commentService.create(testComment);
         regenerateComment();
         inMemory.add(testComment);
-        commentService.create(cardId, testComment);
+        commentService.create(testComment);
         assertEquals(inMemory, commentService.getAll());
     }
 
@@ -156,14 +144,14 @@ public class CommentServiceTest extends BaseTest{
         Card parent1 = testCard;
         UUID first = parent1.getId();
         Comment child1 = testComment;
-        commentService.create(first, child1);
-        regenerateComment();
+        commentService.create(child1);
         regenerateCard();
-        cardService.create(cardListId,testCard);
+        regenerateComment();
+        cardService.create(testCard);
         Card parent2 = testCard;
         UUID second = parent2.getId();
         Comment child2 = testComment;
-        commentService.create(second, child2);
+        commentService.create(child2);
 
         assertAll(
                 () -> assertEquals(List.of(child1),commentService.getParent(first)),
@@ -173,7 +161,7 @@ public class CommentServiceTest extends BaseTest{
 
     @Test
     public void getParentWithIllegalId() {
-        assertEquals(cardService.getParent(UUID.randomUUID()), new ArrayList<>());
+        assertTrue(cardService.getParent(UUID.randomUUID()).isEmpty());
     }
 
 }

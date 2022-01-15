@@ -1,5 +1,6 @@
 package spd.trello.repository;
 
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import spd.trello.db.ConnectionPool;
 import spd.trello.domain.User;
 
@@ -10,118 +11,46 @@ import java.util.UUID;
 
 
 
-public class UserRepository implements IRepository<User> {
+public class UserRepository extends AbstractRepository<User> {
 
     @Override
-    public User create(UUID parent, User user) {
-        try (
-            Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO \"user\" (id, firstname, lastname, email) VALUES (?, ?, ?, ?);")) {
-
-
-            ps.setObject(1, user.getId(), Types.OTHER);
-            ps.setString(2, user.getFirstName());
-            ps.setString(3, user.getLastName());
-            ps.setString(4, user.getEmail());
-
-            ps.execute();
-
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
+    public User create(User user) {
+        jdbcTemplate.update("INSERT INTO \"user\" (id, firstname, lastname, email) VALUES (?, ?, ?, ?);",
+            user.getId(),
+            user.getFirstName(),
+            user.getLastName(),
+            user.getEmail());
         return getById(user.getId());
     }
 
     @Override
     public User update(User user) {
-        try (
-            Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("UPDATE \"user\" SET firstname = ?, lastname = ?, email = ? WHERE id = '" + user.getId()+"'")) {
-
-
-            ps.setObject(1, user.getFirstName());
-            ps.setObject(2, user.getLastName());
-            ps.setString(3, user.getEmail());
-
-            ps.execute();
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-
+        jdbcTemplate.update("UPDATE \"user\" SET firstname = ?, lastname = ?, email = ? WHERE id = ?",
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getId());
         return getById(user.getId());
     }
 
     @Override
     public void delete(UUID uuid) {
-        try (
-            Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM \"user\" WHERE id = '" + uuid + "';")) {
-            ps.execute();
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-
+        jdbcTemplate.update("DELETE FROM \"user\" WHERE id = ?",uuid);
     }
 
     @Override
     public User getById(UUID uuid) {
-        User user = null;
-        try (
-            Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\" WHERE id = '" + uuid.toString() + "';")) {
+        return jdbcTemplate.query("SELECT * FROM \"user\" WHERE id = ?",new BeanPropertyRowMapper<>(User.class),uuid).stream().findFirst().orElse(null);
 
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                user = new User();
-                user.setId(UUID.fromString(rs.getString("id")));
-                user.setEmail(rs.getString("email"));
-                user.setFirstName(rs.getString("firstname"));
-                user.setLastName(rs.getString("lastname"));
-
-            }
-
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-        return user;
     }
 
     @Override
     public List<User> getAll() {
-        List<User> Users = new ArrayList<>();
-        try (
-            Connection connection = ConnectionPool.get().getConnection();
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\"")) {
-
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                User user = new User();
-                user.setId(UUID.fromString(rs.getString("id")));
-                user.setEmail(rs.getString("email"));
-                user.setFirstName(rs.getString("firstname"));
-                user.setLastName(rs.getString("lastname"));
-                Users.add(user);
-            }
-
-
-        } catch (SQLException e) {
-            System.err.println("Error occurred while connecting to database");
-            e.printStackTrace();
-        }
-        return Users;
+        return jdbcTemplate.query("SELECT * FROM \"user\"",new BeanPropertyRowMapper<>(User.class));
     }
 
     @Override
-    public List<User> getParrent(UUID id) {
-        return null;
+    public List<User> getParent(UUID id) {
+        return new ArrayList<>();
     }
 }

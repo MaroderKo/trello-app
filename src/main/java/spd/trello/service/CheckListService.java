@@ -1,13 +1,12 @@
 package spd.trello.service;
 
-import spd.trello.domain.CardList;
 import spd.trello.domain.CheckList;
-import spd.trello.repository.IRepository;
+import spd.trello.repository.AbstractRepository;
 
 
 public class CheckListService extends AbstractService<CheckList>{
 
-    public CheckListService(IRepository<CheckList> repository) {
+    public CheckListService(AbstractRepository<CheckList> repository) {
         super(repository);
     }
 

@@ -1,23 +1,23 @@
 package spd.trello.service;
 
 import spd.trello.domain.Domain;
-import spd.trello.repository.IRepository;
+import spd.trello.repository.AbstractRepository;
 
 import java.util.List;
 import java.util.UUID;
 
 public abstract class AbstractService<T extends Domain> {
 
-    protected IRepository<T> repository;
+    protected AbstractRepository<T> repository;
 
-    protected AbstractService(IRepository<T> repository)
+    protected AbstractService(AbstractRepository<T> repository)
     {
         this.repository = repository;
     }
 
-    public T create(UUID parent, T t)
+    public T create(T t)
     {
-        return repository.create(parent, t);
+        return repository.create(t);
     }
     public T read(UUID id)
     {
@@ -31,20 +31,13 @@ public abstract class AbstractService<T extends Domain> {
     {
         repository.delete(id);
     }
-
-    public void print(T t)
-    {
-        System.out.println(t.toString());
-    }
-
-
     public List<T> getAll()
     {
         return repository.getAll();
     }
     public List<T> getParent(UUID id)
     {
-        return repository.getParrent(id);
+        return repository.getParent(id);
     }
 
 

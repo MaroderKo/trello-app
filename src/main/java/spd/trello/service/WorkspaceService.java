@@ -1,11 +1,11 @@
 package spd.trello.service;
 
 import spd.trello.domain.Workspace;
-import spd.trello.repository.IRepository;
+import spd.trello.repository.AbstractRepository;
 
 public class WorkspaceService extends AbstractService<Workspace> {
 
-    public WorkspaceService(IRepository<Workspace> repository) {
+    public WorkspaceService(AbstractRepository<Workspace> repository) {
         super(repository);
     }
 
