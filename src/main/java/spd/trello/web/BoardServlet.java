@@ -42,9 +42,9 @@ public class BoardServlet extends HttpServlet {
 
             case "delete":
                 service.delete(UUID.fromString(req.getParameter("id")));
-                Optional<Cookie> optionalWorkspaceId1 = Arrays.stream(req.getCookies()).filter(c -> c.getName().equals("workspace_id")).findFirst();
+                Optional<Cookie> optionalWorkspaceId1 = Arrays.stream(req.getCookies()).filter(c -> c.getName().equals("workspaceId")).findFirst();
                 if (optionalWorkspaceId1.isPresent()) {
-                    resp.sendRedirect("boards?workspace_id=" + optionalWorkspaceId1.get().getValue());
+                    resp.sendRedirect("boards?workspaceId=" + optionalWorkspaceId1.get().getValue());
                 } else {
                     resp.sendRedirect("workspaces");
                 }
@@ -52,8 +52,8 @@ public class BoardServlet extends HttpServlet {
 
 
             default:
-                UUID workspaceid = UUID.fromString(req.getParameter("workspace_id"));
-                Optional<Cookie> optionalWorkspaceId = Arrays.stream(req.getCookies()).filter(c -> c.getName().equals("workspace_id")).findFirst();
+                UUID workspaceid = UUID.fromString(req.getParameter("workspaceId"));
+                Optional<Cookie> optionalWorkspaceId = Arrays.stream(req.getCookies()).filter(c -> c.getName().equals("workspaceId")).findFirst();
                 if (optionalWorkspaceId.isPresent()) {
                     System.out.println(1);
                     Cookie whitelistId = optionalWorkspaceId.get();
@@ -61,7 +61,7 @@ public class BoardServlet extends HttpServlet {
                         System.out.println(2);
                         whitelistId.setValue(workspaceid.toString());
                         resp.addCookie(whitelistId);
-                        resp.sendRedirect("boards?workspace_id="+workspaceid);
+                        resp.sendRedirect("boards?workspaceId="+workspaceid);
                         return;
                     }
 
@@ -86,7 +86,7 @@ public class BoardServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
         Board board;
-        Optional<Cookie> optional_w_id = Arrays.stream(req.getCookies()).filter(c -> c.getName().equals("workspace_id")).findFirst();
+        Optional<Cookie> optional_wId = Arrays.stream(req.getCookies()).filter(c -> c.getName().equals("workspaceId")).findFirst();
         switch (action == null ? "all" : action)
         {
             case "update":
@@ -95,7 +95,7 @@ public class BoardServlet extends HttpServlet {
                 board.setDescription(req.getParameter("description"));
                 board.setVisibility(BoardVisibility.valueOf(req.getParameter("visibility")));
                 board.setArchived(req.getParameter("archived") != null);
-                board.setWorkspaceId(UUID.fromString(optional_w_id.get().getValue()));
+                board.setWorkspaceId(UUID.fromString(optional_wId.get().getValue()));
                 System.out.println("archived: "+req.getParameter("archived"));
                 service.update(board);
                 resp.sendRedirect("boards");
@@ -107,15 +107,15 @@ public class BoardServlet extends HttpServlet {
                 board.setVisibility(BoardVisibility.valueOf(req.getParameter("visibility")));
                 board.setArchived(req.getParameter("archived") != null);
 
-                if (optional_w_id.isPresent()) {
-                    board.setWorkspaceId(UUID.fromString(optional_w_id.get().getValue()));
+                if (optional_wId.isPresent()) {
+                    board.setWorkspaceId(UUID.fromString(optional_wId.get().getValue()));
                     service.create(board);
-                    resp.sendRedirect("boards?workspace_id="+optional_w_id.get().getValue());
+                    resp.sendRedirect("boards?workspaceId="+optional_wId.get().getValue());
                     break;
                 }
 
             default:
-                resp.sendRedirect("boards?workspace_id="+optional_w_id.get().getValue());
+                resp.sendRedirect("boards?workspaceId="+optional_wId.get().getValue());
                 break;
         }
     }

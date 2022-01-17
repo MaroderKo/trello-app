@@ -15,8 +15,8 @@ import static spd.trello.Util.loadProperties;
 public class Main {
     public static void main(String[] args) {
         Flyway flyway = createFlyway(ConnectionPool.get());
-        //flyway.migrate();
-        flyway.repair();
+        flyway.migrate();
+        //flyway.repair();
         /*WorkspaceRepository repository = new WorkspaceRepository();
         System.out.println(repository.read(UUID.fromString("49eec80b-da8b-4cde-9222-c765cff34990")));
 *//*        WorkspaceService service = new WorkspaceService(new WorkspaceRepository());

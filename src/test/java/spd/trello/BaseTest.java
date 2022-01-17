@@ -8,6 +8,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import spd.trello.db.ConnectionPool;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 
 public abstract class BaseTest {
@@ -24,6 +26,7 @@ public abstract class BaseTest {
 		dataSource = new HikariDataSource(cfg);
 		ConnectionPool.setSource(dataSource);
 		Flyway flyway = Flyway.configure()
+				.locations("filesystem:src/test")
 				.dataSource(ConnectionPool.get())
 				.load();
 		flyway.migrate();

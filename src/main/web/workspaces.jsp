@@ -33,7 +33,7 @@
                 <td>${workspace.createdDate.withNano(0).toString().replace("T"," ")}</td>
                 <td>${workspace.updatedDate.withNano(0).toString().replace("T"," ")}</td>
                 <td style="overflow:hidden">${workspace.description}</td>
-                <td><a href="boards?workspace_id=${workspace.id}">Open</a></td>
+                <td><a href="boards?workspaceId=${workspace.id}">Open</a></td>
                 <td><a href="workspaces?action=update&id=${workspace.id}">Edit</a></td>
                 <td><a href="workspaces?action=delete&id=${workspace.id}">Delete</a></td>
             </tr>

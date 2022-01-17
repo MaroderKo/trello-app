@@ -29,8 +29,8 @@ public class WorkspaceServlet extends HttpServlet {
                 req.setAttribute("workspace", new Workspace());
                 req.getRequestDispatcher("/workspace_menu.jsp").forward(req,resp);
             case "open":
-                req.setAttribute("workspace_id",req.getParameter("id"));
-                resp.addCookie(new Cookie("workspace_id", req.getParameter("id")));
+                req.setAttribute("workspaceId",req.getParameter("id"));
+                resp.addCookie(new Cookie("workspaceId", req.getParameter("id")));
                 req.getRequestDispatcher("/boards.jsp").forward(req, resp);
                 break;
 
@@ -40,6 +40,8 @@ public class WorkspaceServlet extends HttpServlet {
                 req.getRequestDispatcher("/workspace_menu.jsp").forward(req,resp);
                 return;
             case "delete":
+                service.delete(UUID.fromString(req.getParameter("id")));
+                resp.sendRedirect("/workspaces");
                 break;
 
             default:
