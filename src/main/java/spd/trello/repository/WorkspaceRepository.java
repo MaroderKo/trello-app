@@ -1,96 +1,67 @@
 package spd.trello.repository;
 
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import spd.trello.db.ConnectionPool;
 import spd.trello.domain.Workspace;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import static spd.trello.repository.RepositoryUtil.toLocalDateTime;
 
+public class WorkspaceRepository extends AbstractRepository<Workspace> {
 
-public class WorkspaceRepository {
-
-    public void create(Workspace workspace) {
-        try (PreparedStatement ps = ConnectionPool.get().getConnection().prepareStatement("INSERT INTO workspace (id, updated_by, created_by, created_date, updated_date, name, description) VALUES (?, ?, ?, ?, ?, ?, ?);")) {
-
-
-            ps.setObject(1, workspace.getId(), Types.OTHER);
-            ps.setObject(2, workspace.getUpdatedBy() == null ? null : workspace.getUpdatedBy());
-            ps.setString(3, workspace.getCreatedBy());
-            ps.setObject(4, Timestamp.valueOf(workspace.getCreatedDate()), Types.TIMESTAMP);
-            ps.setObject(5, workspace.getUpdatedDate() == null ? null : Timestamp.valueOf(workspace.getUpdatedDate()), Types.TIMESTAMP);
-            ps.setString(6, workspace.getName());
-            ps.setString(7, workspace.getDescription());
-
-            ps.execute();
-
-
-        } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
-            e.printStackTrace();
-        }
+    @Override
+    public Workspace create(Workspace workspace) {
+        jdbcTemplate.update("INSERT INTO workspace (id, updated_by, created_by, created_date, updated_date, name, description, visibility) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+                workspace.getId(),
+                workspace.getUpdatedBy(),
+                workspace.getCreatedBy(),
+                workspace.getCreatedDate(),
+                workspace.getUpdatedDate(),
+                workspace.getName(),
+                workspace.getDescription(),
+                workspace.getVisibility().toString());
+        return getById(workspace.getId());
     }
 
-    public void update(UUID uuid, Workspace workspace) {
+    @Override
+    public Workspace update(Workspace workspace) {
         workspace.setUpdatedDate(LocalDateTime.now());
-        try (PreparedStatement ps = ConnectionPool.get().getConnection().prepareStatement("UPDATE workspace SET updated_by = ?, updated_date = ?, name = ?, description = ? WHERE id = "+uuid)) {
+        jdbcTemplate.update("UPDATE workspace SET updated_by = ?, updated_date = ?, name = ?, description = ?, visibility = ? WHERE id = ?",
+                workspace.getUpdatedBy(),
+                workspace.getUpdatedDate(),
+                workspace.getName(),
+                workspace.getDescription(),
+                workspace.getVisibility().name(),
+                workspace.getId());
 
-
-            ps.setObject(1, workspace.getUpdatedBy() == null ? null : workspace.getUpdatedBy());
-            ps.setObject(2, workspace.getUpdatedDate() == null ? null : Timestamp.valueOf(workspace.getUpdatedDate()), Types.TIMESTAMP);
-            ps.setString(3, workspace.getName());
-            ps.setString(4, workspace.getDescription());
-
-            ps.execute();
-
-        } catch (SQLException e) {
-            System.err.println("SQL EXCEPTION");
-            e.printStackTrace();
-        }
+        return getById(workspace.getId());
     }
 
+    @Override
     public void delete(UUID uuid) {
-        try (PreparedStatement ps = ConnectionPool.get().getConnection().prepareStatement("DELETE FROM workspace WHERE id = \'" + uuid+"\';")) {
-            ps.execute();
-        } catch (SQLException e)
-        {
-            System.err.println(e.getMessage());
-        }
+
+        jdbcTemplate.update("DELETE FROM workspace WHERE id = ?", uuid);
+
 
     }
 
-
-    public Workspace read(UUID uuid) {
-        Workspace workspace = null;
-        System.out.println(uuid);
-        try (PreparedStatement ps = ConnectionPool.get().getConnection().prepareStatement("SELECT * FROM workspace WHERE id = \'"+uuid.toString()+"\';")) {
-
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                workspace = new Workspace();
-                workspace.setId(UUID.fromString(rs.getString("id")));
-                if (rs.getString("updated_by") != null) {
-                    workspace.setUpdatedBy(rs.getString("updated_by"));
-                }
-                workspace.setCreatedBy(rs.getString("created_by"));
-                workspace.setCreatedDate(toLocalDateTime(rs.getString("created_date")));
-                if (rs.getString("updated_date") != null) {
-                    workspace.setUpdatedDate(toLocalDateTime(rs.getString("updated_date")));
-                }
-                workspace.setName(rs.getString("name"));
-                workspace.setDescription(rs.getString("description"));
-            }
-
-
-        } catch (SQLException e) {
-            System.err.println("Ошибка при обращении к базе данных");
-            e.printStackTrace();
-        }
-        return workspace;
+    @Override
+    public Workspace getById(UUID uuid) {
+        return jdbcTemplate.query("SELECT * FROM workspace WHERE id = ?",
+                new BeanPropertyRowMapper<>(Workspace.class), uuid).stream().findFirst().orElse(null);
     }
 
+    @Override
+    public List<Workspace> getAll() {
+        return jdbcTemplate.query("SELECT * FROM workspace", new BeanPropertyRowMapper<>(Workspace.class));
+    }
+
+    @Override
+    public List<Workspace> getParent(UUID parentId) {
+        return new ArrayList<>();
+    }
 }

@@ -5,15 +5,17 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.UUID;
+
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Comment extends Resource{
-    private Member member;
+    private String author;
+    private UUID cardId;
     private String text;
     private LocalDateTime date;
-    private List<Attachment> attachments;
+    private Boolean archived;
 
 
 

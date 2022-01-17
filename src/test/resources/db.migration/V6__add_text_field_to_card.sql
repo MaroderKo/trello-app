@@ -1,0 +1,1 @@
+ALTER TABLE card ADD COLUMN text varchar(250) not null default '';

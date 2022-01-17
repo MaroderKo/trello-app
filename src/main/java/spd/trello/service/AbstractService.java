@@ -1,20 +1,46 @@
 package spd.trello.service;
 
-import spd.trello.domain.Resource;
+import spd.trello.domain.Domain;
+import spd.trello.repository.AbstractRepository;
 
 import java.util.List;
 import java.util.UUID;
 
-public abstract class AbstractService<T extends Resource> {
+public abstract class AbstractService<T extends Domain> {
 
-    public abstract T create();
+    protected AbstractRepository<T> repository;
 
-    public void print(T t)
+    protected AbstractService(AbstractRepository<T> repository)
     {
-        System.out.println(t.toString());
-    };
+        this.repository = repository;
+    }
 
-    public abstract void update (UUID index, T t);
+    public T create(T t)
+    {
+        return repository.create(t);
+    }
+    public T read(UUID id)
+    {
+        return repository.getById(id);
+    }
+    public T update (T t)
+    {
+        return repository.update(t);
+    }
+    public void delete(UUID id)
+    {
+        repository.delete(id);
+    }
+    public List<T> getAll()
+    {
+        return repository.getAll();
+    }
+    public List<T> getParent(UUID id)
+    {
+        return repository.getParent(id);
+    }
+
+
 
 
 }

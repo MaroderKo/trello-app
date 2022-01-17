@@ -29,14 +29,19 @@ public class ConnectionPool {
     private static DataSource createDataSource() throws IOException {
         Properties properties = loadProperties();
         HikariConfig cfg = new HikariConfig();
+            cfg.setJdbcUrl(properties.getProperty("jdbc.url"));
+            cfg.setUsername(properties.getProperty("jdbc.username"));
+            cfg.setPassword(properties.getProperty("jdbc.password"));
+        cfg.setDriverClassName("org.postgresql.Driver");
 
-        cfg.setJdbcUrl(properties.getProperty("jdbc.url"));
-        cfg.setUsername(properties.getProperty("jdbc.username"));
-        cfg.setPassword(properties.getProperty("jdbc.password"));
 
         int maxPoolSize = Integer.parseInt(properties.getProperty("jdbc.pool.maxConnection"));
         cfg.setMaximumPoolSize(maxPoolSize);
 
         return new HikariDataSource(cfg);
+    }
+
+    public static void setSource(DataSource source) {
+        ConnectionPool.source = source;
     }
 }

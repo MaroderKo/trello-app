@@ -1,0 +1,1 @@
+ALTER TABLE workspace ADD COLUMN visibility varchar(10) not null default 'PRIVATE';
