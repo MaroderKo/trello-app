@@ -1,40 +1,32 @@
 import org.flywaydb.core.Flyway;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import spd.trello.db.ConnectionPool;
 import spd.trello.domain.Workspace;
-import spd.trello.repository.WorkspaceRepository;
+import spd.trello.domain.WorkspaceVisibility;
 import spd.trello.service.WorkspaceService;
 
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.util.Properties;
-import java.util.Scanner;
-import java.util.UUID;
-
-import static spd.trello.Util.loadProperties;
 
 public class Main {
     public static void main(String[] args) {
         Flyway flyway = createFlyway(ConnectionPool.get());
         flyway.migrate();
         //flyway.repair();
-        /*WorkspaceRepository repository = new WorkspaceRepository();
-        System.out.println(repository.read(UUID.fromString("49eec80b-da8b-4cde-9222-c765cff34990")));
-*//*        WorkspaceService service = new WorkspaceService(new WorkspaceRepository());
-        Workspace workspace = service.create();
-        Scanner sc = new Scanner(System.in);
-        UUID id = workspace.getId();
-        Workspace workspace1 = service.read(id);
-        System.out.println(workspace.equals(workspace1));
-        System.out.println(UUID.randomUUID());*//*
-*/
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ConnectionPool.class);
+
+        Workspace workspace = new Workspace();
+        workspace.setName("test");
+        workspace.setVisibility(WorkspaceVisibility.PUBLIC);
+        workspace.setDescription("12345");
+        WorkspaceService service = context.getBean(WorkspaceService.class);
+        service.create(workspace);
     }
 //TODO: change parent id interface with method MOVE
 
-    private static Flyway createFlyway(DataSource dataSource)
-    {
+    private static Flyway createFlyway(DataSource dataSource) {
         return Flyway.configure()
                 .dataSource(dataSource)
                 .load();
     }
-    
+
 }

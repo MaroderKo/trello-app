@@ -1,13 +1,14 @@
 package spd.trello.repository;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.stereotype.Component;
 import spd.trello.domain.Member;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
+@Component
 public class MemberRepository extends AbstractRepository<Member> {
 
     @Override

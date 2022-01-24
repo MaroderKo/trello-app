@@ -1,6 +1,7 @@
 package spd.trello.repository;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.stereotype.Component;
 import spd.trello.db.ConnectionPool;
 import spd.trello.domain.User;
 
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-
+@Component
 public class UserRepository extends AbstractRepository<User> {
 
     @Override

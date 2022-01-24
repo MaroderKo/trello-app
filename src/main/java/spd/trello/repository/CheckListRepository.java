@@ -1,6 +1,7 @@
 package spd.trello.repository;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.stereotype.Component;
 import spd.trello.db.ConnectionPool;
 import spd.trello.domain.CheckList;
 
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 import static spd.trello.repository.RepositoryUtil.toLocalDateTime;
 
-
+@Component
 public class CheckListRepository extends AbstractRepository<CheckList> {
     @Override
     public CheckList create(CheckList checkList) {

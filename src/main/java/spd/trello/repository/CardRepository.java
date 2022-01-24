@@ -1,13 +1,14 @@
 package spd.trello.repository;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.stereotype.Component;
 import spd.trello.domain.Card;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-
+@Component
 public class CardRepository extends AbstractRepository<Card> {
     @Override
     public Card create(Card card) {

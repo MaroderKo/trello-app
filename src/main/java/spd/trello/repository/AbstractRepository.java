@@ -1,6 +1,7 @@
 package spd.trello.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 import spd.trello.db.ConnectionPool;
 import spd.trello.domain.Domain;
 
@@ -8,6 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
+@Component
 public abstract class AbstractRepository<T extends Domain> {
 
     protected static final String SQL_EXCEPTION_MESSAGE = "Error occurred while connecting to database";

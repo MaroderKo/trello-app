@@ -1,11 +1,13 @@
 package spd.trello.service;
 
+import org.springframework.stereotype.Service;
 import spd.trello.domain.Domain;
 import spd.trello.repository.AbstractRepository;
 
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public abstract class AbstractService<T extends Domain> {
 
     protected AbstractRepository<T> repository;

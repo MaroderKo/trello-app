@@ -2,6 +2,8 @@ package spd.trello.db;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -9,6 +11,8 @@ import java.util.Properties;
 
 import static spd.trello.Util.loadProperties;
 
+@Configuration
+@ComponentScan(basePackages = {"spd.trello.repository","spd.trello.service"})
 public class ConnectionPool {
     private static DataSource source;
 

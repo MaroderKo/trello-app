@@ -1,11 +1,13 @@
 package spd.trello.repository;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.stereotype.Component;
 import spd.trello.domain.CheckableItem;
 
 import java.util.List;
 import java.util.UUID;
 
+@Component
 public class CheckableItemRepository extends AbstractRepository<CheckableItem> {
     @Override
     public CheckableItem create(CheckableItem checkableItem) {
