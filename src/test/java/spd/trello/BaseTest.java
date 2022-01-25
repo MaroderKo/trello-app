@@ -6,6 +6,7 @@ import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.springframework.beans.factory.annotation.Autowired;
 import spd.trello.db.ConnectionPool;
 
 import java.nio.file.Path;
@@ -15,6 +16,8 @@ import java.sql.SQLException;
 public abstract class BaseTest {
 
 	protected static HikariDataSource dataSource;
+	@Autowired
+	static ConnectionPool connectionPool;
 
 	@BeforeAll
 	public static void init() {
@@ -24,10 +27,10 @@ public abstract class BaseTest {
 		cfg.setUsername("sa");
 		cfg.setDriverClassName("org.h2.Driver");
 		dataSource = new HikariDataSource(cfg);
-		ConnectionPool.setSource(dataSource);
+		connectionPool.setSource(dataSource);
 		Flyway flyway = Flyway.configure()
 				.locations("filesystem:src/test")
-				.dataSource(ConnectionPool.get())
+				.dataSource(connectionPool.getSource())
 				.load();
 		flyway.migrate();
 	}

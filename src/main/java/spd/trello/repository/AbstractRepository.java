@@ -1,5 +1,6 @@
 package spd.trello.repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import spd.trello.db.ConnectionPool;
@@ -14,7 +15,8 @@ public abstract class AbstractRepository<T extends Domain> {
 
     protected static final String SQL_EXCEPTION_MESSAGE = "Error occurred while connecting to database";
 
-    JdbcTemplate jdbcTemplate = new JdbcTemplate(ConnectionPool.get());
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     public abstract T create(T t);
 

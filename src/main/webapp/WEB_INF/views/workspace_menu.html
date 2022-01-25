@@ -1,0 +1,30 @@
+
+<html>
+<head>
+    <title>Workspaces</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<section>
+    <h3><a href="index.html">Home</a></h3>
+    <hr/>
+    <h2>Workspace menu</h2>
+    <hr/>
+    <!--/*@thymesVar id="workspace" type="spd.trello.domain.Workspace"*/-->
+    <!--/*@thymesVar id="action" type="java.lang.String"*/-->
+    <form action="#"  method="post">
+        <input type="hidden" th:name="action" th:value="${action}"/>
+        <input type="hidden" name="id" th:value="${workspace.id}">
+        <label>Name: </label><input type="text" th:field="${workspace.name}" name="name" maxlength="20" required/><br>
+        <label>Description: </label><input type="text" th:field="${workspace.description}" name="description" maxlength="50"/><br>
+        <label>Visibility: </label>
+        <select name="visibility">
+        <option th:value="PRIVATE" th:selected='${workspace.getVisibility() == workspace.visibility.PRIVATE}' >Private</option>
+        <option th:value="PUBLIC" th:selected='${workspace.getVisibility() == workspace.visibility.PUBLIC}'>Public</option>
+        </select><br>
+
+        <input type="submit" name="Submit">
+    </form>
+</section>
+</body>
+</html>

@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: dex
+    password: 666666ar
+    url: jdbc:postgresql://localhost:5432/dex
+    type: com.zaxxer.hikari.HikariDataSource
+
+  liquibase:
+    enabled: false
+
+  flyway:
+    baseline-on-migrate: true
+    url: jdbc:postgresql://localhost:5432/dex
+    user: dex
+    password: 666666ar
+
+  thymeleaf:
+    prefix: "WEB_INF/views/"
+    suffix: ".html"
+

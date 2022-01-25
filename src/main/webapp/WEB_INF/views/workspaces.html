@@ -1,0 +1,42 @@
+<html>
+<head>
+    <title>Workspaces</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<section>
+    <h3><a href="index.html">Home</a></h3>
+    <hr/>
+    <h2>Workspaces</h2>
+    <hr/>
+    <a href="workspaces/create">Add Workspace</a>
+    <br><br>
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Create date</th>
+            <th>Update date</th>
+            <th>Description</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <!--/*@thymesVar id="workspaces" type="java.util.List<spd.trello.domain.Workspace>"*/-->
+        <!--/*@thymesVar id="workspace" type="spd.trello.domain.Workspace"*/-->
+        <tr th:each="workspace : ${workspaces}">
+            <td th:text="${workspace.name}"></td>
+            <td th:text='${workspace.createdDate.withNano(0).toString().replace("T"," ")}'></td>
+            <td th:text='${workspace.updatedDate != null ? workspace.updatedDate.withNano(0).toString().replace("T"," ") : ""}'></td>
+            <td style="overflow:hidden" th:text="${workspace.description}"></td>
+            <td><a th:href="@{/boards(workspaceId=${workspace.id})}">Open</a></td>
+            <td><a th:href="@{/workspaces/update(id=${workspace.id})}">Edit</a></td>
+            <td><a th:href="@{/workspaces/delete(id=${workspace.id})}">Delete</a></td>
+
+        </tr>
+    </table>
+</section>
+</body>
+</html>
