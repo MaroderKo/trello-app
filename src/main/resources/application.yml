@@ -16,6 +16,10 @@ spring:
     password: postgres
 
   thymeleaf:
-    prefix: "WEB_INF/views/"
+    prefix: "WEB-INF/views/"
     suffix: ".html"
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
