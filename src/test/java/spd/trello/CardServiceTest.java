@@ -1,6 +1,5 @@
 package spd.trello;
 
-import org.h2.message.DbException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,7 +10,6 @@ import spd.trello.repository.CardRepository;
 import spd.trello.repository.WorkspaceRepository;
 import spd.trello.service.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

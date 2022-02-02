@@ -1,6 +1,5 @@
 package spd.trello;
 
-import org.h2.message.DbException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
