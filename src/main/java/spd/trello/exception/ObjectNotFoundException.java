@@ -1,9 +1,9 @@
 package spd.trello.exception;
 
-import java.util.UUID;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+@ResponseStatus(value = HttpStatus.NOT_FOUND,reason = "Resource not found")
 public class ObjectNotFoundException extends RuntimeException{
-    public ObjectNotFoundException(UUID id, Class<?> clas) {
-        super(clas.getName()+" with id '"+id+"' not found!");
-    }
+
 }
