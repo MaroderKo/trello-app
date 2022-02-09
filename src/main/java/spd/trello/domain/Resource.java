@@ -3,7 +3,9 @@ package spd.trello.domain;
 
 import lombok.*;
 
+import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
+@MappedSuperclass
 @Data
 @ToString(callSuper = true)
 @NoArgsConstructor

@@ -8,18 +8,18 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public abstract class AbstractService<T extends Domain> {
+public abstract class AbstractService<T extends Domain, R extends AbstractRepository<T>> {
 
-    protected AbstractRepository<T> repository;
+    protected R repository;
 
-    protected AbstractService(AbstractRepository<T> repository)
+    protected AbstractService(R repository)
     {
         this.repository = repository;
     }
 
     public T create(T t)
     {
-        return repository.create(t);
+        return repository.saveAndFlush(t);
     }
     public T read(UUID id)
     {
@@ -31,15 +31,11 @@ public abstract class AbstractService<T extends Domain> {
     }
     public void delete(UUID id)
     {
-        repository.delete(id);
+        repository.deleteById(id);
     }
     public List<T> getAll()
     {
-        return repository.getAll();
-    }
-    public List<T> getParent(UUID id)
-    {
-        return repository.getParent(id);
+        return repository.findAll();
     }
 
 

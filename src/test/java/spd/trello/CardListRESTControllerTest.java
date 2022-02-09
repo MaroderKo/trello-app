@@ -18,7 +18,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CardListServiceTest extends BaseTest {
+public class CardListRESTControllerTest extends BaseTest {
 
     AbstractService<Workspace> workspaceService = new WorkspaceService(new WorkspaceRepository());
     AbstractService<Board> boardService = new BoardService(new BoardRepository());

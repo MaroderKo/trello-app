@@ -4,14 +4,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.util.UUID;
 
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class CardList extends Resource{
+@Entity
+public class CardList extends Resource implements ParentBased{
+    @Column
     private String name;
-    private UUID boardId;
+    @Column(name = "board_id")
+    private UUID parentId;
+    @Column
     private Boolean archived;
 
 

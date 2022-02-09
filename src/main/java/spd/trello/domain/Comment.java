@@ -4,17 +4,25 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Comment extends Resource{
+@Entity
+public class Comment extends Resource implements ParentBased{
+    @Column
     private String author;
-    private UUID cardId;
+    @Column(name = "card_id")
+    private UUID parentId;
+    @Column
     private String text;
+    @Column
     private LocalDateTime date;
+    @Column
     private Boolean archived;
 
 

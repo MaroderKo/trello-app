@@ -2,12 +2,12 @@ package spd.trello.service;
 
 import org.springframework.stereotype.Service;
 import spd.trello.domain.CheckableItem;
-import spd.trello.repository.AbstractRepository;
+import spd.trello.repository.CheckableItemRepository;
 
 @Service
-public class CheckableItemService extends AbstractService<CheckableItem>{
+public class CheckableItemService extends AbstractParentBasedService<CheckableItem, CheckableItemRepository>{
 
-    public CheckableItemService(AbstractRepository<CheckableItem> repository) {
+    public CheckableItemService(CheckableItemRepository repository) {
         super(repository);
     }
 

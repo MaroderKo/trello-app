@@ -4,18 +4,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import spd.trello.domain.Domain;
 import spd.trello.exception.ObjectNotFoundException;
+import spd.trello.repository.AbstractRepository;
 import spd.trello.service.AbstractService;
 
 import java.util.List;
 import java.util.UUID;
 
-public class AbstractRESTController<T extends Domain> {
-    final AbstractService<T> service;
+public class AbstractRESTController<T extends Domain, R extends AbstractRepository<T>> {
+    final AbstractService<T,R> service;
 
-    public AbstractRESTController(AbstractService<T> service) {
+    public AbstractRESTController(AbstractService<T,R> service) {
         this.service = service;
     }
 

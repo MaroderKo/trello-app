@@ -2,14 +2,16 @@ package spd.trello.service;
 
 import org.springframework.stereotype.Service;
 import spd.trello.domain.Board;
-import spd.trello.repository.AbstractRepository;
+import spd.trello.repository.BoardRepository;
+
 
 @Service
-public class BoardService extends AbstractService<Board>{
+public class BoardService extends AbstractParentBasedService<Board, BoardRepository>{
 
-    public BoardService(AbstractRepository<Board> repository) {
+    public BoardService(BoardRepository repository) {
         super(repository);
     }
+
 
 
 
