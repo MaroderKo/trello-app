@@ -3,33 +3,34 @@ package spd.trello;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
-import org.springframework.test.context.ContextConfiguration;
 import spd.trello.domain.Board;
 import spd.trello.domain.BoardVisibility;
 import spd.trello.domain.Workspace;
 import spd.trello.domain.WorkspaceVisibility;
-import spd.trello.repository.BoardRepository;
-import spd.trello.repository.WorkspaceRepository;
-import spd.trello.service.BoardService;
-import spd.trello.service.WorkspaceService;
+import spd.trello.service.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+@SpringBootTest(classes = {
+        BoardService.class,
+        WorkspaceService.class
+
+})
 public class BoardServiceTest extends BaseTest{
-    @Autowired
     WorkspaceService workspaceService;
-    @Autowired
     BoardService boardService;
     Board testBoard;
     Workspace testWorkspace;
+    @Autowired
+    public BoardServiceTest(WorkspaceService workspaceService, BoardService boardService) {
+        this.workspaceService = workspaceService;
+        this.boardService = boardService;
+    }
 
     @BeforeEach
     public void initObjects()
