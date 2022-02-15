@@ -15,7 +15,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class CheckList extends Resource implements ParentBased{
-    @Column(name = "card_id")
+    @Column
     private UUID parentId;
     @Column
     private String name;

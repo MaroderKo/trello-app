@@ -14,7 +14,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class Reminder extends Resource{
-    @Column(name = "card_id")
+    @Column
     private UUID parentId;
     @Column
     private LocalDateTime start;

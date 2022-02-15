@@ -17,7 +17,7 @@ import java.util.UUID;
 public class CardList extends Resource implements ParentBased{
     @Column
     private String name;
-    @Column(name = "board_id")
+    @Column
     private UUID parentId;
     @Column
     private Boolean archived;

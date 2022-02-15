@@ -19,7 +19,7 @@ public class Board extends Resource implements ParentBased{
     private String name;
     @Column
     private String description;
-    @Column(name = "workspace_id")
+    @Column
     private UUID parentId;
     @Column
     @Enumerated(EnumType.STRING)
