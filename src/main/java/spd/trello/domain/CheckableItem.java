@@ -13,7 +13,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class CheckableItem extends Domain implements ParentBased{
-    @Column
+    @Column(name="parent_id")
     private UUID parentId;
     @Column
     private String name;

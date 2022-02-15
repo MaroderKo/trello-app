@@ -19,7 +19,7 @@ public class Board extends Resource implements ParentBased{
     private String name;
     @Column
     private String description;
-    @Column
+    @Column(name="parent_id")
     private UUID parentId;
     @Column
     @Enumerated(EnumType.STRING)
@@ -28,7 +28,7 @@ public class Board extends Resource implements ParentBased{
     private Boolean archived;
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
-    @CollectionTable(name = "cardlist", joinColumns = @JoinColumn(name = "board_id"))
+    @CollectionTable(name = "cardlist", joinColumns = @JoinColumn(name = "parent_id"))
     @Column(name = "id")
     List<UUID> cardlist;
 

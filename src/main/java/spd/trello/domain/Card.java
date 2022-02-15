@@ -17,7 +17,7 @@ import java.util.UUID;
 public class Card extends Resource implements ParentBased{
     @Column
     private String name;
-    @Column
+    @Column(name="parent_id")
     private UUID parentId;
     @Column
     private String description;
@@ -27,6 +27,6 @@ public class Card extends Resource implements ParentBased{
     Reminder reminder;
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
-    @CollectionTable(name = "checklist", joinColumns = @JoinColumn(name = "card_id"))
+    @CollectionTable(name = "checklist", joinColumns = @JoinColumn(name = "parent_id"))
     List<UUID> checkList;
 }

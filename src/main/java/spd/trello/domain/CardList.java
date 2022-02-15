@@ -17,13 +17,13 @@ import java.util.UUID;
 public class CardList extends Resource implements ParentBased{
     @Column
     private String name;
-    @Column
+    @Column(name="parent_id")
     private UUID parentId;
     @Column
     private Boolean archived;
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
-    @CollectionTable(name = "card", joinColumns = @JoinColumn(name = "cardlist_id"))
+    @CollectionTable(name = "card", joinColumns = @JoinColumn(name = "parent_id"))
     List<UUID> cards;
 
 

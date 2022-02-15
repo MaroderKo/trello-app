@@ -16,7 +16,7 @@ import java.util.UUID;
 public class Comment extends Resource implements ParentBased{
     @Column
     private String author;
-    @Column
+    @Column(name="parent_id")
     private UUID parentId;
     @Column
     private String text;

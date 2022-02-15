@@ -15,13 +15,13 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class CheckList extends Resource implements ParentBased{
-    @Column
+    @Column(name="parent_id")
     private UUID parentId;
     @Column
     private String name;
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
-    @CollectionTable(name = "checkable_item", joinColumns = @JoinColumn(name = "checklist_id"))
+    @CollectionTable(name = "checkable_item", joinColumns = @JoinColumn(name = "parent_id"))
     List<UUID> items;
 
 }

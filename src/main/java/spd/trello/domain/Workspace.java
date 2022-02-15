@@ -24,7 +24,7 @@ public class Workspace extends Resource{
     private WorkspaceVisibility visibility = WorkspaceVisibility.PRIVATE;
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
-    @CollectionTable(name = "board", joinColumns = @JoinColumn(name = "workspace_id"))
+    @CollectionTable(name = "board", joinColumns = @JoinColumn(name = "parent_id"))
     @Column(name = "id")
     List<UUID> boards;
 }
