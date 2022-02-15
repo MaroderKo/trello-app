@@ -2,9 +2,10 @@ package spd.trello;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.User;
-import spd.trello.repository.UserRepository;
-import spd.trello.service.AbstractService;
 import spd.trello.service.UserService;
 
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTest extends BaseTest {
-    static AbstractService<User> userService = new UserService(new UserRepository());
+    @Autowired
+    static UserService userService;
     static User testUser;
 
     @BeforeEach
@@ -40,7 +42,7 @@ public class UserServiceTest extends BaseTest {
     @Test
     public void readNotExisted()
     {
-        assertNull(userService.read(UUID.randomUUID()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> userService.read(UUID.randomUUID()));
     }
 
     @Test
@@ -65,7 +67,7 @@ public class UserServiceTest extends BaseTest {
     {
         userService.create(testUser);
         userService.delete(testUser.getId());
-        assertNull(userService.read(testUser.getId()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> userService.read(testUser.getId()));
     }
 
     @Test
@@ -78,11 +80,6 @@ public class UserServiceTest extends BaseTest {
         inMemory.add(testUser);
         userService.create(testUser);
         assertEquals(inMemory, userService.getAll());
-    }
-
-    @Test
-    public void getParent() {
-        assertTrue(userService.getParent(UUID.randomUUID()).isEmpty());
     }
 
 }

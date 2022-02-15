@@ -1,23 +1,21 @@
 package spd.trello;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import spd.trello.db.ConnectionPool;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.Workspace;
 import spd.trello.domain.WorkspaceVisibility;
-import spd.trello.repository.WorkspaceRepository;
-import spd.trello.service.AbstractService;
 import spd.trello.service.WorkspaceService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 public class WorkspaceServiceTest extends BaseTest {
-    static AbstractService<Workspace> workspaceService = new WorkspaceService(new WorkspaceRepository());
+    @Autowired
+    static WorkspaceService workspaceService;
     static Workspace testWorkspace;
 
     @BeforeEach
@@ -44,7 +42,7 @@ public class WorkspaceServiceTest extends BaseTest {
 
     @Test
     public void readNotExisted() {
-        assertNull(workspaceService.read(UUID.randomUUID()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> workspaceService.read(UUID.randomUUID()));
     }
 
     @Test
@@ -53,7 +51,7 @@ public class WorkspaceServiceTest extends BaseTest {
         testWorkspace.setName("Updated");
         testWorkspace.setDescription("Updated");
         testWorkspace.setVisibility(WorkspaceVisibility.PUBLIC);
-        assertNull(workspaceService.read(testWorkspace.getId()).getUpdatedDate());
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> workspaceService.read(testWorkspace.getId()).getUpdatedDate());
         workspaceService.update(testWorkspace);
         Workspace newWorkspace = workspaceService.read(testWorkspace.getId());
         assertNotNull(newWorkspace.getUpdatedDate());
@@ -69,7 +67,7 @@ public class WorkspaceServiceTest extends BaseTest {
     public void delete() {
         workspaceService.create(testWorkspace);
         workspaceService.delete(testWorkspace.getId());
-        assertNull(workspaceService.read(testWorkspace.getId()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> workspaceService.read(testWorkspace.getId()));
     }
 
     @Test
@@ -81,11 +79,6 @@ public class WorkspaceServiceTest extends BaseTest {
         inMemory.add(testWorkspace);
         workspaceService.create(testWorkspace);
         assertEquals(inMemory, workspaceService.getAll());
-    }
-
-    @Test
-    public void getParent() {
-        assertTrue(workspaceService.getParent(UUID.randomUUID()).isEmpty());
     }
 
 }

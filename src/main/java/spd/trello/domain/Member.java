@@ -14,7 +14,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class Member extends Domain {
+public class Member extends Domain implements ParentBased {
     @Column
     private UUID user;
     @Column

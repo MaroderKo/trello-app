@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AbstractParentBasedRepository<T extends Domain & ParentBased> extends AbstractRepository<T>{
-    @Query(value = "select t.type from #{#entityName} t where t.parentId  = ?1", nativeQuery = true)
+    @Query(value = "select * from #{#entityName} t where t.parentId  = ?1", nativeQuery = true)
     List<T> findByParentId(UUID id);
 }

@@ -2,10 +2,10 @@ package spd.trello;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.*;
-import spd.trello.repository.MemberRepository;
-import spd.trello.repository.UserRepository;
-import spd.trello.service.AbstractService;
 import spd.trello.service.MemberService;
 import spd.trello.service.UserService;
 
@@ -15,8 +15,10 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MemberServiceTest extends BaseTest {
-    static AbstractService<Member> memberService = new MemberService(new MemberRepository());
-    static AbstractService<User> userService = new UserService(new UserRepository());
+    @Autowired
+    static MemberService memberService;
+    @Autowired
+    static UserService userService;
     static Member testMember;
     static User testUser;
 
@@ -65,7 +67,7 @@ public class MemberServiceTest extends BaseTest {
     @Test
     public void readNotExisted()
     {
-        assertNull(memberService.read(UUID.randomUUID()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> memberService.read(UUID.randomUUID()));
     }
 
     @Test
@@ -86,11 +88,11 @@ public class MemberServiceTest extends BaseTest {
     @Test
     public void delete()
     {
-        assertNull(memberService.read(testMember.getId()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> memberService.read(testMember.getId()));
         memberService.create(testMember);
         assertNotNull(memberService.read(testMember.getId()));
         memberService.delete(testMember.getId());
-        assertNull(memberService.read(testMember.getId()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> memberService.read(testMember.getId()));
     }
 
     @Test

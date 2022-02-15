@@ -2,9 +2,11 @@ package spd.trello;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.*;
-import spd.trello.repository.*;
 import spd.trello.service.*;
 
 import java.util.List;
@@ -14,11 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CheckListServiceTest extends BaseTest {
 
-    AbstractService<Workspace> workspaceService = new WorkspaceService(new WorkspaceRepository());
-    AbstractService<Board> boardService = new BoardService(new BoardRepository());
-    AbstractService<CardList> cardListService = new CardListService(new CardListRepository());
-    AbstractService<Card> cardService = new CardService(new CardRepository());
-    AbstractService<CheckList> checkListService = new CheckListService(new CheckListRepository());
+    @Autowired
+    WorkspaceService workspaceService;
+    @Autowired
+    BoardService boardService;
+    @Autowired
+    CardListService cardListService;
+    @Autowired
+    CardService cardService;
+    @Autowired
+    CheckListService checkListService;
     Workspace testWorkspace;
     Board testBoard;
     CardList testCardList;
@@ -26,8 +33,7 @@ public class CheckListServiceTest extends BaseTest {
     CheckList testCheckList;
 
     @BeforeEach
-    public void initObjects()
-    {
+    public void initObjects() {
         testWorkspace = new Workspace();
         testWorkspace.setName("Test");
         testWorkspace.setDescription("12354");
@@ -39,26 +45,26 @@ public class CheckListServiceTest extends BaseTest {
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.WORKSPACE);
-        testBoard.setWorkspaceId(testWorkspace.getId());
+        testBoard.setParentId(testWorkspace.getId());
         boardService.create(testBoard);
 
         testCardList = new CardList();
         testCardList.setName("firstCardList");
         testCardList.setArchived(false);
-        testCardList.setBoardId(testBoard.getId());
+        testCardList.setParentId(testBoard.getId());
         cardListService.create(testCardList);
 
         testCard = new Card();
         testCard.setName("firstCard");
         testCard.setDescription("12345");
         testCard.setArchived(false);
-        testCard.setCardlistId(testCardList.getId());
+        testCard.setParentId(testCardList.getId());
         cardService.create(testCard);
 
 
         testCheckList = new CheckList();
         testCheckList.setName("firstCheckList");
-        testCheckList.setCardId(testCard.getId());
+        testCheckList.setParentId(testCard.getId());
 
     }
 
@@ -67,18 +73,15 @@ public class CheckListServiceTest extends BaseTest {
         testCard.setName("regenerated");
         testCard.setArchived(false);
         testCard.setDescription("54321");
-        testCard.setCardlistId(testCardList.getId());
+        testCard.setParentId(testCardList.getId());
 
     }
 
     private void regenerateCheckList() {
         testCheckList = new CheckList();
         testCheckList.setName("regenerated");
-        testCheckList.setCardId(testCard.getId());
+        testCheckList.setParentId(testCard.getId());
     }
-
-
-
 
 
     @Test
@@ -92,13 +95,13 @@ public class CheckListServiceTest extends BaseTest {
 
     @Test
     public void readNotExisted() {
-        assertNull(checkListService.read(UUID.randomUUID()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> checkListService.read(UUID.randomUUID()));
     }
 
     @Test
     public void createWithIllegalId() {
-        testCheckList.setCardId(UUID.randomUUID());
-        assertThrows(DataIntegrityViolationException.class,() -> checkListService.create(testCheckList));
+        testCheckList.setParentId(UUID.randomUUID());
+        assertThrows(DataIntegrityViolationException.class, () -> checkListService.create(testCheckList));
     }
 
     @Test
@@ -115,11 +118,11 @@ public class CheckListServiceTest extends BaseTest {
 
     @Test
     public void delete() {
-        assertNull(checkListService.read(testCheckList.getId()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> checkListService.read(testCheckList.getId()));
         checkListService.create(testCheckList);
         assertNotNull(checkListService.read(testCheckList.getId()));
         checkListService.delete(testCheckList.getId());
-        assertNull(checkListService.read(testCheckList.getId()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> checkListService.read(testCheckList.getId()));
     }
 
     @Test
@@ -132,7 +135,6 @@ public class CheckListServiceTest extends BaseTest {
         checkListService.create(testCheckList);
         assertEquals(inMemory, checkListService.getAll());
     }
-
 
 
     @Test
@@ -154,7 +156,6 @@ public class CheckListServiceTest extends BaseTest {
                 () -> assertEquals(List.of(checkList2), checkListService.getParent(second))
         );
     }
-
 
 
     @Test

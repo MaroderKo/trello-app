@@ -3,11 +3,11 @@ package spd.trello.domain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -26,5 +26,10 @@ public class Board extends Resource implements ParentBased{
     private BoardVisibility visibility;
     @Column
     private Boolean archived;
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @CollectionTable(name = "cardlist", joinColumns = @JoinColumn(name = "board_id"))
+    @Column(name = "id")
+    List<UUID> cardlist;
 
 }

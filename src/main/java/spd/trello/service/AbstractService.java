@@ -19,7 +19,7 @@ public abstract class AbstractService<T extends Domain, R extends AbstractReposi
 
     public T create(T t)
     {
-        return repository.saveAndFlush(t);
+        return repository.save(t);
     }
     public T read(UUID id)
     {

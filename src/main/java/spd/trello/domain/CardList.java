@@ -3,15 +3,17 @@ package spd.trello.domain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "cardlist")
 public class CardList extends Resource implements ParentBased{
     @Column
     private String name;
@@ -19,6 +21,10 @@ public class CardList extends Resource implements ParentBased{
     private UUID parentId;
     @Column
     private Boolean archived;
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @CollectionTable(name = "card", joinColumns = @JoinColumn(name = "cardlist_id"))
+    List<UUID> cards;
 
 
 }

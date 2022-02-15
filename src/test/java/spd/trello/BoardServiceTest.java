@@ -2,25 +2,32 @@ package spd.trello;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
+import org.springframework.test.context.ContextConfiguration;
 import spd.trello.domain.Board;
 import spd.trello.domain.BoardVisibility;
 import spd.trello.domain.Workspace;
 import spd.trello.domain.WorkspaceVisibility;
 import spd.trello.repository.BoardRepository;
 import spd.trello.repository.WorkspaceRepository;
-import spd.trello.service.AbstractService;
 import spd.trello.service.BoardService;
 import spd.trello.service.WorkspaceService;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 public class BoardServiceTest extends BaseTest{
-    AbstractService<Workspace> workspaceService = new WorkspaceService(new WorkspaceRepository());
-    AbstractService<Board> boardService = new BoardService(new BoardRepository());
+    @Autowired
+    WorkspaceService workspaceService;
+    @Autowired
+    BoardService boardService;
     Board testBoard;
     Workspace testWorkspace;
 
@@ -36,12 +43,12 @@ public class BoardServiceTest extends BaseTest{
         workspaceService.create(testWorkspace);
 
         testBoard = new Board();
-        testBoard.setWorkspaceId(testWorkspace.getId());
+        testBoard.setParentId(testWorkspace.getId());
         testBoard.setName("testBoard");
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.WORKSPACE);
-        testBoard.setWorkspaceId(testWorkspace.getId());
+        testBoard.setParentId(testWorkspace.getId());
     }
 
     public void regenerateWorkspace()
@@ -56,7 +63,7 @@ public class BoardServiceTest extends BaseTest{
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.PRIVATE);
-        testBoard.setWorkspaceId(testWorkspace.getId());
+        testBoard.setParentId(testWorkspace.getId());
     }
 
 
@@ -74,12 +81,15 @@ public class BoardServiceTest extends BaseTest{
 
     @Test
     public void readNotExisted()  {
-        assertNull(boardService.read(UUID.randomUUID()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> {
+            Board read = boardService.read(UUID.randomUUID());
+            System.out.println(read);
+        });
     }
 
     @Test
     public void createWithIllegalId() {
-        testBoard.setWorkspaceId(UUID.randomUUID());
+        testBoard.setParentId(UUID.randomUUID());
         assertThrows(DataIntegrityViolationException.class,() -> boardService.create(testBoard));
     }
 
@@ -103,8 +113,9 @@ public class BoardServiceTest extends BaseTest{
     @Test
     public void delete(){
         boardService.create(testBoard);
+        assertNotNull(boardService.read(testBoard.getId()));
         boardService.delete(testBoard.getId());
-        assertNull(boardService.read(testBoard.getId()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> boardService.read(testBoard.getId()));
     }
 
     @Test

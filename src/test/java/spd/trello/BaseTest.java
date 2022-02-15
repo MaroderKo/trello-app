@@ -3,20 +3,31 @@ package spd.trello;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import spd.trello.db.ConnectionPool;
+import spd.trello.repository.BoardRepository;
+import spd.trello.repository.WorkspaceRepository;
+import spd.trello.service.BoardService;
+import spd.trello.service.WorkspaceService;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLException;
+import javax.transaction.Transactional;
 
+@SpringBootTest(classes = {
+		WorkspaceService.class,
+		WorkspaceRepository.class,
+		BoardRepository.class,
+		BoardService.class
+})
+@EnableAutoConfiguration
+@Transactional()
 public abstract class BaseTest {
 
 	protected static HikariDataSource dataSource;
-	@Autowired
 	static ConnectionPool connectionPool;
 
 	@BeforeAll
@@ -27,7 +38,7 @@ public abstract class BaseTest {
 		cfg.setUsername("sa");
 		cfg.setDriverClassName("org.h2.Driver");
 		dataSource = new HikariDataSource(cfg);
-		connectionPool.setSource(dataSource);
+		connectionPool = new ConnectionPool(dataSource);
 		Flyway flyway = Flyway.configure()
 				.locations("filesystem:src/test")
 				.dataSource(connectionPool.getSource())

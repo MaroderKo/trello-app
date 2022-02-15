@@ -2,27 +2,27 @@ package spd.trello;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.*;
-import spd.trello.repository.BoardRepository;
-import spd.trello.repository.CardListRepository;
-import spd.trello.repository.WorkspaceRepository;
-import spd.trello.service.AbstractService;
 import spd.trello.service.BoardService;
 import spd.trello.service.CardListService;
 import spd.trello.service.WorkspaceService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CardListRESTControllerTest extends BaseTest {
-
-    AbstractService<Workspace> workspaceService = new WorkspaceService(new WorkspaceRepository());
-    AbstractService<Board> boardService = new BoardService(new BoardRepository());
-    AbstractService<CardList> cardListService = new CardListService(new CardListRepository());
+    @Autowired
+    WorkspaceService workspaceService;
+    @Autowired
+    BoardService boardService;
+    @Autowired
+    CardListService cardListService;
     Workspace testWorkspace;
     Board testBoard;
     CardList testCardList;
@@ -42,13 +42,13 @@ public class CardListRESTControllerTest extends BaseTest {
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.WORKSPACE);
-        testBoard.setWorkspaceId(testWorkspace.getId());
+        testBoard.setParentId(testWorkspace.getId());
         boardService.create(testBoard);
 
         testCardList = new CardList();
         testCardList.setName("firstCardList");
         testCardList.setArchived(false);
-        testCardList.setBoardId(testBoard.getId());
+        testCardList.setParentId(testBoard.getId());
     }
 
     private void regenerateBoard() {
@@ -57,7 +57,7 @@ public class CardListRESTControllerTest extends BaseTest {
         testBoard.setArchived(false);
         testBoard.setDescription("54321");
         testBoard.setVisibility(BoardVisibility.PUBLIC);
-        testBoard.setWorkspaceId(testWorkspace.getId());
+        testBoard.setParentId(testWorkspace.getId());
 
     }
 
@@ -65,8 +65,8 @@ public class CardListRESTControllerTest extends BaseTest {
         testCardList = new CardList();
         testCardList.setName("regenerated");
         testCardList.setArchived(true);
-        testCardList.setBoardId(testBoard.getId());
-        testCardList.setBoardId(testBoard.getId());
+        testCardList.setParentId(testBoard.getId());
+        testCardList.setParentId(testBoard.getId());
     }
 
 
@@ -85,12 +85,12 @@ public class CardListRESTControllerTest extends BaseTest {
 
     @Test
     public void readNotExisted() {
-        assertNull(cardListService.read(UUID.randomUUID()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> cardListService.read(UUID.randomUUID()));
     }
 
     @Test
     public void createWithIllegalId() {
-        testCardList.setBoardId(UUID.randomUUID());
+        testCardList.setParentId(UUID.randomUUID());
         assertThrows(DataIntegrityViolationException.class,() -> cardListService.create(testCardList));
     }
 
@@ -110,11 +110,11 @@ public class CardListRESTControllerTest extends BaseTest {
 
     @Test
     public void delete() {
-        assertNull(cardListService.read(testCardList.getId()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> cardListService.read(testCardList.getId()));
         cardListService.create(testCardList);
         assertNotNull(cardListService.read(testCardList.getId()));
         cardListService.delete(testCardList.getId());
-        assertNull(cardListService.read(testCardList.getId()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> cardListService.read(testCardList.getId()));
     }
 
     @Test

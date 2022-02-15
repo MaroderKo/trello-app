@@ -3,11 +3,12 @@ package spd.trello.domain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
+import java.util.List;
+import java.util.UUID;
 
 @Data
 @RequiredArgsConstructor
@@ -21,5 +22,9 @@ public class Workspace extends Resource{
     @Column
     @Enumerated(EnumType.STRING)
     private WorkspaceVisibility visibility = WorkspaceVisibility.PRIVATE;
-
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @CollectionTable(name = "board", joinColumns = @JoinColumn(name = "workspace_id"))
+    @Column(name = "id")
+    List<UUID> boards;
 }

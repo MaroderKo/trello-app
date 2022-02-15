@@ -2,25 +2,28 @@ package spd.trello;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.*;
-import spd.trello.repository.BoardRepository;
-import spd.trello.repository.CardListRepository;
-import spd.trello.repository.CardRepository;
-import spd.trello.repository.WorkspaceRepository;
 import spd.trello.service.*;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class CardServiceTest extends BaseTest{
-    AbstractService<Workspace> workspaceService = new WorkspaceService(new WorkspaceRepository());
-    AbstractService<Board> boardService = new BoardService(new BoardRepository());
-    AbstractService<CardList> cardListService = new CardListService(new CardListRepository());
-    AbstractService<Card> cardService = new CardService(new CardRepository());
+    @Autowired
+    WorkspaceService workspaceService;
+    @Autowired
+    BoardService boardService;
+    @Autowired
+    CardListService cardListService;
+    @Autowired
+    CardService cardService;
     Workspace testWorkspace;
     Board testBoard;
     CardList testCardList;
@@ -41,20 +44,20 @@ public class CardServiceTest extends BaseTest{
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.WORKSPACE);
-        testBoard.setWorkspaceId(testWorkspace.getId());
+        testBoard.setParentId(testWorkspace.getId());
         boardService.create(testBoard);
 
         testCardList = new CardList();
         testCardList.setName("firstCardList");
         testCardList.setArchived(false);
-        testCardList.setBoardId(testBoard.getId());
+        testCardList.setParentId(testBoard.getId());
         cardListService.create(testCardList);
 
         testCard = new Card();
         testCard.setName("firstCard");
         testCard.setDescription("12345");
         testCard.setArchived(false);
-        testCard.setCardlistId(testCardList.getId());
+        testCard.setParentId(testCardList.getId());
 
     }
 
@@ -62,7 +65,7 @@ public class CardServiceTest extends BaseTest{
         testCardList = new CardList();
         testCardList.setName("regenerated");
         testCardList.setArchived(true);
-        testCardList.setBoardId(testBoard.getId());
+        testCardList.setParentId(testBoard.getId());
     }
 
     private void regenerateCard()
@@ -71,7 +74,7 @@ public class CardServiceTest extends BaseTest{
         testCard.setName("regenerated");
         testCard.setDescription("54321");
         testCard.setArchived(false);
-        testCard.setCardlistId(testCardList.getId());
+        testCard.setParentId(testCardList.getId());
     }
 
 
@@ -88,12 +91,12 @@ public class CardServiceTest extends BaseTest{
 
     @Test
     public void readNotExisted()  {
-        assertNull(cardService.read(UUID.randomUUID()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> cardService.read(UUID.randomUUID()));
     }
 
     @Test
     public void createWithIllegalId() {
-        testCard.setCardlistId(UUID.randomUUID());
+        testCard.setParentId(UUID.randomUUID());
         assertThrows(DataIntegrityViolationException.class,() -> cardService.create(testCard));
     }
 
@@ -114,11 +117,11 @@ public class CardServiceTest extends BaseTest{
 
     @Test
     public void delete(){
-        assertNull(cardService.read(testCard.getId()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> cardService.read(testCard.getId()));
         cardService.create(testCard);
         assertNotNull(cardService.read(testCard.getId()));
         cardService.delete(testCard.getId());
-        assertNull(cardService.read(testCard.getId()));
+        assertThrows(JpaObjectRetrievalFailureException.class,() -> cardService.read(testCard.getId()));
     }
 
     @Test
