@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: sa
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    type: com.zaxxer.hikari.HikariDataSource
+
+  liquibase:
+    enabled: false
+
+  flyway:
+    baseline-on-migrate: true
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    user: sa
+    password: sa
+    locations: 'classpath:db/testmigrations'
+
+  thymeleaf:
+    prefix: "WEB-INF/views/"
+    suffix: ".html"
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+      format_sql: true
+
