@@ -3,9 +3,9 @@ package spd.trello;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.Workspace;
 import spd.trello.domain.WorkspaceVisibility;
+import spd.trello.exception.ObjectNotFoundException;
 import spd.trello.service.WorkspaceService;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public class WorkspaceServiceTest extends BaseTest {
 
     @Test
     public void readNotExisted() {
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> workspaceService.read(UUID.randomUUID()));
+        assertThrows(ObjectNotFoundException.class,() -> workspaceService.read(UUID.randomUUID()));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class WorkspaceServiceTest extends BaseTest {
         testWorkspace.setName("Updated");
         testWorkspace.setDescription("Updated");
         testWorkspace.setVisibility(WorkspaceVisibility.PUBLIC);
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> workspaceService.read(testWorkspace.getId()).getUpdatedDate());
+        assertThrows(ObjectNotFoundException.class,() -> workspaceService.read(testWorkspace.getId()).getUpdatedDate());
         workspaceService.update(testWorkspace);
         Workspace newWorkspace = workspaceService.read(testWorkspace.getId());
         assertNotNull(newWorkspace.getUpdatedDate());
@@ -66,7 +66,7 @@ public class WorkspaceServiceTest extends BaseTest {
     public void delete() {
         workspaceService.create(testWorkspace);
         workspaceService.delete(testWorkspace.getId());
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> workspaceService.read(testWorkspace.getId()));
+        assertThrows(ObjectNotFoundException.class,() -> workspaceService.read(testWorkspace.getId()));
     }
 
     @Test

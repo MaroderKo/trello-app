@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.*;
+import spd.trello.exception.ObjectNotFoundException;
 import spd.trello.service.*;
 
 import java.util.List;
@@ -90,7 +90,7 @@ public class CardServiceTest extends BaseTest{
 
     @Test
     public void readNotExisted()  {
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> cardService.read(UUID.randomUUID()));
+        assertThrows(ObjectNotFoundException.class,() -> cardService.read(UUID.randomUUID()));
     }
 
     @Test
@@ -116,11 +116,11 @@ public class CardServiceTest extends BaseTest{
 
     @Test
     public void delete(){
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> cardService.read(testCard.getId()));
+        assertThrows(ObjectNotFoundException.class,() -> cardService.read(testCard.getId()));
         cardService.create(testCard);
         assertNotNull(cardService.read(testCard.getId()));
         cardService.delete(testCard.getId());
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> cardService.read(testCard.getId()));
+        assertThrows(ObjectNotFoundException.class,() -> cardService.read(testCard.getId()));
     }
 
     @Test

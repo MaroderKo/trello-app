@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.*;
+import spd.trello.exception.ObjectNotFoundException;
 import spd.trello.service.*;
 
 import java.util.List;
@@ -99,7 +99,7 @@ public class CommentServiceTest extends BaseTest {
 
     @Test
     public void readNotExisted() {
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> commentService.read(UUID.randomUUID()));
+        assertThrows(ObjectNotFoundException.class,() -> commentService.read(UUID.randomUUID()));
     }
 
     @Test
@@ -123,11 +123,11 @@ public class CommentServiceTest extends BaseTest {
 
     @Test
     public void delete() {
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> commentService.read(testComment.getId()));
+        assertThrows(ObjectNotFoundException.class,() -> commentService.read(testComment.getId()));
         commentService.create(testComment);
         assertNotNull(commentService.read(testComment.getId()));
         commentService.delete(testComment.getId());
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> commentService.read(testComment.getId()));
+        assertThrows(ObjectNotFoundException.class,() -> commentService.read(testComment.getId()));
     }
 
     @Test

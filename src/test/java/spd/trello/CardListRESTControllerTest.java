@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.*;
+import spd.trello.exception.ObjectNotFoundException;
 import spd.trello.service.BoardService;
 import spd.trello.service.CardListService;
 import spd.trello.service.WorkspaceService;
@@ -84,7 +84,7 @@ public class CardListRESTControllerTest extends BaseTest {
 
     @Test
     public void readNotExisted() {
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> cardListService.read(UUID.randomUUID()));
+        assertThrows(ObjectNotFoundException.class,() -> cardListService.read(UUID.randomUUID()));
     }
 
     @Test
@@ -109,11 +109,11 @@ public class CardListRESTControllerTest extends BaseTest {
 
     @Test
     public void delete() {
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> cardListService.read(testCardList.getId()));
+        assertThrows(ObjectNotFoundException.class,() -> cardListService.read(testCardList.getId()));
         cardListService.create(testCardList);
         assertNotNull(cardListService.read(testCardList.getId()));
         cardListService.delete(testCardList.getId());
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> cardListService.read(testCardList.getId()));
+        assertThrows(ObjectNotFoundException.class,() -> cardListService.read(testCardList.getId()));
     }
 
     @Test

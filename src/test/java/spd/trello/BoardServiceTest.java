@@ -4,22 +4,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.Board;
 import spd.trello.domain.BoardVisibility;
 import spd.trello.domain.Workspace;
 import spd.trello.domain.WorkspaceVisibility;
-import spd.trello.service.*;
+import spd.trello.exception.ObjectNotFoundException;
+import spd.trello.service.BoardService;
+import spd.trello.service.WorkspaceService;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-public class BoardServiceTest extends BaseTest{
+@Transactional
+public class BoardServiceTest extends BaseTest {
     WorkspaceService workspaceService;
     BoardService boardService;
     Board testBoard;
     Workspace testWorkspace;
+
     @Autowired
     public BoardServiceTest(WorkspaceService workspaceService, BoardService boardService) {
         this.workspaceService = workspaceService;
@@ -27,8 +31,7 @@ public class BoardServiceTest extends BaseTest{
     }
 
     @BeforeEach
-    public void initObjects()
-    {
+    public void initObjects() {
 
 
         testWorkspace = new Workspace();
@@ -46,13 +49,11 @@ public class BoardServiceTest extends BaseTest{
         testBoard.setParentId(testWorkspace.getId());
     }
 
-    public void regenerateWorkspace()
-    {
+    public void regenerateWorkspace() {
         testWorkspace = new Workspace();
     }
 
-    public void regenerateBoard()
-    {
+    public void regenerateBoard() {
         testBoard = new Board();
         testBoard.setName("testBoard");
         testBoard.setArchived(false);
@@ -63,7 +64,7 @@ public class BoardServiceTest extends BaseTest{
 
 
     @Test
-    public void create(){
+    public void create() {
         Board returned = boardService.create(testBoard);
         assertEquals(testBoard, returned);
         assertAll(
@@ -75,21 +76,18 @@ public class BoardServiceTest extends BaseTest{
     }
 
     @Test
-    public void readNotExisted()  {
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> {
-            Board read = boardService.read(UUID.randomUUID());
-            System.out.println(read);
-        });
+    public void readNotExisted() {
+        assertThrows(ObjectNotFoundException.class, () -> boardService.read(UUID.randomUUID()));
     }
 
     @Test
     public void createWithIllegalId() {
         testBoard.setParentId(UUID.randomUUID());
-        assertThrows(DataIntegrityViolationException.class,() -> boardService.create(testBoard));
+        assertThrows(DataIntegrityViolationException.class, () -> boardService.create(testBoard));
     }
 
     @Test
-    public void update(){
+    public void update() {
         boardService.create(testBoard);
         testBoard.setName("Updated");
         testBoard.setDescription("Updated");
@@ -106,15 +104,15 @@ public class BoardServiceTest extends BaseTest{
     }
 
     @Test
-    public void delete(){
+    public void delete() {
         boardService.create(testBoard);
         assertNotNull(boardService.read(testBoard.getId()));
         boardService.delete(testBoard.getId());
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> boardService.read(testBoard.getId()));
+        assertThrows(ObjectNotFoundException.class, () -> boardService.read(testBoard.getId()));
     }
 
     @Test
-    public void getAll(){
+    public void getAll() {
         List<Board> inMemory = boardService.getAll();
         inMemory.add(testBoard);
         boardService.create(testBoard);
@@ -125,7 +123,7 @@ public class BoardServiceTest extends BaseTest{
     }
 
     @Test
-    public void getParent(){
+    public void getParent() {
         Workspace workspace1 = testWorkspace;
         UUID first = workspace1.getId();
         Board board1 = testBoard;
@@ -139,9 +137,9 @@ public class BoardServiceTest extends BaseTest{
         boardService.create(board2);
 
         assertAll(
-                () -> assertEquals(List.of(board1),boardService.getParent(first)),
-                () -> assertEquals(List.of(board2),boardService.getParent(second))
-    );
+                () -> assertEquals(List.of(board1), boardService.getParent(first)),
+                () -> assertEquals(List.of(board2), boardService.getParent(second))
+        );
     }
 
     @Test

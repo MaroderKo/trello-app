@@ -3,8 +3,9 @@ package spd.trello;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
+import org.springframework.boot.test.context.SpringBootTest;
 import spd.trello.domain.User;
+import spd.trello.exception.ObjectNotFoundException;
 import spd.trello.service.UserService;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class UserServiceTest extends BaseTest {
     @Test
     public void readNotExisted()
     {
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> userService.read(UUID.randomUUID()));
+        assertThrows(ObjectNotFoundException.class,() -> userService.read(UUID.randomUUID()));
     }
 
     @Test
@@ -66,7 +67,7 @@ public class UserServiceTest extends BaseTest {
     {
         userService.create(testUser);
         userService.delete(testUser.getId());
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> userService.read(testUser.getId()));
+        assertThrows(ObjectNotFoundException.class,() -> userService.read(testUser.getId()));
     }
 
     @Test

@@ -10,5 +10,5 @@ public class ObjectNotFoundException extends RuntimeException{
         super(e.getCause());
     }
 
-    public ObjectNotFoundException(){}
+    public ObjectNotFoundException(){super("Resource not found");}
 }

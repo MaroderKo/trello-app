@@ -19,7 +19,7 @@ import javax.transaction.Transactional;
 
 })
 @EnableAutoConfiguration
-@Transactional()
+//@Transactional()
 public abstract class BaseTest {
 //
 //    protected static HikariDataSource dataSource;

@@ -27,6 +27,8 @@ spring:
   jpa:
     show-sql: true
     open-in-view: false
+    properties:
+      hibernate.format_sql: true
     hibernate:
       ddl-auto: none
       format_sql: true

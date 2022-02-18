@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.*;
+import spd.trello.exception.ObjectNotFoundException;
 import spd.trello.service.*;
 
 import java.util.List;
@@ -106,7 +106,7 @@ public class CheckableItemServiceTest extends BaseTest {
 
     @Test
     public void readNotExisted() {
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> checkableItemService.read(UUID.randomUUID()));
+        assertThrows(ObjectNotFoundException.class,() -> checkableItemService.read(UUID.randomUUID()));
     }
 
     @Test
@@ -129,11 +129,11 @@ public class CheckableItemServiceTest extends BaseTest {
 
     @Test
     public void delete() {
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> checkableItemService.read(testCheckableItem.getId()));
+        assertThrows(ObjectNotFoundException.class,() -> checkableItemService.read(testCheckableItem.getId()));
         checkableItemService.create(testCheckableItem);
         assertNotNull(checkableItemService.read(testCheckableItem.getId()));
         checkableItemService.delete(testCheckableItem.getId());
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> checkableItemService.read(testCheckableItem.getId()));
+        assertThrows(ObjectNotFoundException.class,() -> checkableItemService.read(testCheckableItem.getId()));
     }
 
     @Test

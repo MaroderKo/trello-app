@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import spd.trello.domain.*;
+import spd.trello.exception.ObjectNotFoundException;
 import spd.trello.service.*;
 
 import java.util.List;
@@ -94,7 +94,7 @@ public class CheckListServiceTest extends BaseTest {
 
     @Test
     public void readNotExisted() {
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> checkListService.read(UUID.randomUUID()));
+        assertThrows(ObjectNotFoundException.class,() -> checkListService.read(UUID.randomUUID()));
     }
 
     @Test
@@ -117,11 +117,11 @@ public class CheckListServiceTest extends BaseTest {
 
     @Test
     public void delete() {
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> checkListService.read(testCheckList.getId()));
+        assertThrows(ObjectNotFoundException.class,() -> checkListService.read(testCheckList.getId()));
         checkListService.create(testCheckList);
         assertNotNull(checkListService.read(testCheckList.getId()));
         checkListService.delete(testCheckList.getId());
-        assertThrows(JpaObjectRetrievalFailureException.class,() -> checkListService.read(testCheckList.getId()));
+        assertThrows(ObjectNotFoundException.class,() -> checkListService.read(testCheckList.getId()));
     }
 
     @Test
