@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CardListRESTControllerTest extends BaseTest {
+public class CardListServiceTest extends BaseTest {
     @Autowired
     WorkspaceService workspaceService;
     @Autowired

@@ -10,8 +10,6 @@ import javax.transaction.Transactional;
         BoardService.class,
         CardListService.class,
         CardService.class,
-        CheckableItemService.class,
-        CheckListService.class,
         CommentService.class,
         MemberService.class,
         UserService.class,

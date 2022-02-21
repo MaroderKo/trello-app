@@ -7,6 +7,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,10 +22,11 @@ public class CardList extends Resource implements ParentBased{
     private UUID parentId;
     @Column
     private Boolean archived;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @LazyCollection(LazyCollectionOption.FALSE)
     @CollectionTable(name = "card", joinColumns = @JoinColumn(name = "parent_id"))
-    List<UUID> cards;
+    @Column(name = "id")
+    List<UUID> cards = new ArrayList<>();
 
 
 }

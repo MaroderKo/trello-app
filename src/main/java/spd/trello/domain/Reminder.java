@@ -19,7 +19,7 @@ public class Reminder extends Resource{
     @Column
     private LocalDateTime start;
     @Column
-    private LocalDateTime end;
+    private LocalDateTime ends;
     @Column
     private String remindOn;
     @Column

@@ -21,8 +21,6 @@ public class Comment extends Resource implements ParentBased{
     @Column
     private String text;
     @Column
-    private LocalDateTime date;
-    @Column
     private Boolean archived;
 
 

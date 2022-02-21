@@ -1,5 +1,6 @@
 package spd.trello.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,10 +25,12 @@ public class Card extends Resource implements ParentBased{
     private String description;
     @Column
     private Boolean archived;
-    @OneToOne(targetEntity = Reminder.class)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="id")
     Reminder reminder;
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
     @CollectionTable(name = "checklist", joinColumns = @JoinColumn(name = "parent_id"))
-    List<UUID> checkList;
+    @Column(name = "id")
+    List<UUID> checkList = new ArrayList<>();
 }
