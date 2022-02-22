@@ -15,8 +15,8 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class Member extends Domain implements ParentBased {
-    @Column
-    private UUID user;
+    @Column(name = "parent_id")
+    private UUID parentId;
     @Column
     @Enumerated(EnumType.STRING)
     private Role role;

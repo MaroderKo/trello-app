@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTest extends BaseTest {
     @Autowired
-    static UserService userService;
+    UserService userService;
     static User testUser;
 
     @BeforeEach

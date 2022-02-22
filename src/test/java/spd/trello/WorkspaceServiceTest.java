@@ -14,8 +14,9 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 public class WorkspaceServiceTest extends BaseTest {
     @Autowired
-    static WorkspaceService workspaceService;
+    WorkspaceService workspaceService;
     static Workspace testWorkspace;
+
 
     @BeforeEach
     protected void workspaceInit() {
@@ -50,7 +51,7 @@ public class WorkspaceServiceTest extends BaseTest {
         testWorkspace.setName("Updated");
         testWorkspace.setDescription("Updated");
         testWorkspace.setVisibility(WorkspaceVisibility.PUBLIC);
-        assertThrows(ObjectNotFoundException.class,() -> workspaceService.read(testWorkspace.getId()).getUpdatedDate());
+        assertNull(workspaceService.read(testWorkspace.getId()).getUpdatedDate());
         workspaceService.update(testWorkspace);
         Workspace newWorkspace = workspaceService.read(testWorkspace.getId());
         assertNotNull(newWorkspace.getUpdatedDate());

@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MemberServiceTest extends BaseTest {
     @Autowired
-    static MemberService memberService;
+    MemberService memberService;
     @Autowired
-    static UserService userService;
+    UserService userService;
     static Member testMember;
     static User testUser;
 
@@ -33,7 +33,7 @@ public class MemberServiceTest extends BaseTest {
         
         Member member = new Member();
         member.setRole(Role.ADMIN);
-        member.setUser(testUser.getId());
+        member.setParentId(testUser.getId());
         testMember = member;
     }
 
@@ -48,7 +48,7 @@ public class MemberServiceTest extends BaseTest {
     public void regenerateMember()
     {
         testMember = new Member();
-        testMember.setUser(testUser.getId());
+        testMember.setParentId(testUser.getId());
         testMember.setRole(Role.GUEST);
     }
 
@@ -58,7 +58,7 @@ public class MemberServiceTest extends BaseTest {
         assertEquals(testMember, returned);
         assertAll(
                 () -> assertEquals(Role.ADMIN, returned.getRole()),
-                () -> assertEquals(testUser.getId(), returned.getUser())
+                () -> assertEquals(testUser.getId(), returned.getParentId())
         );
 
     }
@@ -79,7 +79,7 @@ public class MemberServiceTest extends BaseTest {
         assertEquals(testMember, newMember);
         assertAll(
                 () -> assertEquals(testMember.getRole(), newMember.getRole()),
-                () -> assertEquals(testMember.getUser(), newMember.getUser()),
+                () -> assertEquals(testMember.getParentId(), newMember.getParentId()),
                 () -> assertEquals(testMember.getId(), newMember.getId())
         );
     }

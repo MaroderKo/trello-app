@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "user", schema = "public")
+@Table(name = "users")
 public class User extends Domain{
     @Column
     private String firstName;

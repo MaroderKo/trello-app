@@ -1,6 +1,6 @@
 package spd.trello.service;
 
-import org.springframework.stereotype.Service;
+
 import spd.trello.domain.Domain;
 import spd.trello.domain.Resource;
 import spd.trello.exception.ObjectNotFoundException;
@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Service
 public abstract class AbstractService<T extends Domain, R extends AbstractRepository<T>> {
 
     protected R repository;

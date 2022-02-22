@@ -7,6 +7,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,5 +27,5 @@ public class Workspace extends Resource{
     @LazyCollection(LazyCollectionOption.FALSE)
     @CollectionTable(name = "board", joinColumns = @JoinColumn(name = "parent_id"))
     @Column(name = "id")
-    List<UUID> boards;
+    List<UUID> boards = new ArrayList<>();
 }
