@@ -2,8 +2,7 @@ package spd.trello.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import spd.trello.domain.Domain;
 import spd.trello.exception.ObjectNotFoundException;
 import spd.trello.repository.AbstractRepository;
@@ -24,12 +23,19 @@ public class AbstractRESTController<T extends Domain, R extends AbstractReposito
         return service.getAll();
     }
 
-    @RequestMapping(value = "/create")
+    @PostMapping(value = "/create")
     public ResponseEntity<T> Create(@RequestBody T t) {
         return new ResponseEntity<>(service.create(t), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/update")
+    @GetMapping(value = "/id/{id}")
+    public ResponseEntity<T> Read(@PathVariable String id) {
+        if (service.read(UUID.fromString(id)) == null)
+            throw new ObjectNotFoundException();
+        return new ResponseEntity<>(service.read(UUID.fromString(id)), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/update")
     public ResponseEntity<T> Update(@RequestBody T t) {
         if (service.read(t.getId()) == null)
             throw new ObjectNotFoundException();
@@ -38,8 +44,8 @@ public class AbstractRESTController<T extends Domain, R extends AbstractReposito
     }
 
 
-    @RequestMapping("/delete")
-    public HttpStatus Delete(@RequestBody String id)
+    @DeleteMapping("/delete/{id}")
+    public HttpStatus Delete(@PathVariable String id)
     {
 
         if (service.read(UUID.fromString(id)) == null)
