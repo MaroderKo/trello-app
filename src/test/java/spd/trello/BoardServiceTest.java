@@ -46,7 +46,6 @@ public class BoardServiceTest extends BaseTest {
         testBoard.setArchived(false);
         testBoard.setDescription("12345");
         testBoard.setVisibility(BoardVisibility.WORKSPACE);
-        testBoard.setParentId(testWorkspace.getId());
     }
 
     public void regenerateWorkspace() {

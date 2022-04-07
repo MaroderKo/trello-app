@@ -1,6 +1,7 @@
 package spd.trello;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -124,6 +125,7 @@ public class CardServiceTest extends BaseTest{
     }
 
     @Test
+    @Order(1)
     public void getAll(){
         List<Card> inMemory = cardService.getAll();
         inMemory.add(testCard);

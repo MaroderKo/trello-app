@@ -2,7 +2,6 @@ package spd.trello.web;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MvcResult;
@@ -18,7 +17,6 @@ import static org.mockito.Mockito.when;
 
 public class WorkspaceControllerTest extends BaseWebTest<Workspace> implements ControllerActionList {
 
-    @Autowired
     @MockBean
     WorkspaceService service;
 
@@ -89,7 +87,6 @@ public class WorkspaceControllerTest extends BaseWebTest<Workspace> implements C
     @Override
     public void updateSuccess() throws Exception {
         when(service.read(workspace.getId())).thenReturn(workspace);
-
         MvcResult result = update("/api/workspaces/update", workspace);
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
     }
@@ -106,7 +103,7 @@ public class WorkspaceControllerTest extends BaseWebTest<Workspace> implements C
     @Test
     @Override
     public void deleteSuccess() throws Exception {
-        when(service.read(workspace.getId())).thenReturn(workspace).thenReturn(null).thenReturn(null).thenReturn(null).thenReturn(null);
+        when(service.read(workspace.getId())).thenReturn(workspace).thenReturn(null);
         MvcResult result = delete("/api/workspaces/delete/" + workspace.getId());
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
     }

@@ -26,6 +26,7 @@ public class Board extends Resource implements ParentBased{
     private BoardVisibility visibility;
     @Column
     private Boolean archived;
+    @EqualsAndHashCode.Exclude
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
     @CollectionTable(name = "cardlist", joinColumns = @JoinColumn(name = "parent_id"))

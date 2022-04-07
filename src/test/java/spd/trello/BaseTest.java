@@ -1,10 +1,10 @@
 package spd.trello;
 
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import spd.trello.service.*;
-
-import javax.transaction.Transactional;
 
 @SpringBootTest(classes = {
         BoardService.class,
@@ -18,6 +18,7 @@ import javax.transaction.Transactional;
 })
 @EnableAutoConfiguration
 //@Transactional()
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public abstract class BaseTest {
 //
 //    protected static HikariDataSource dataSource;

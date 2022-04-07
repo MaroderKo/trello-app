@@ -21,8 +21,27 @@ public class Reminder extends Resource{
     @Column
     private LocalDateTime ends;
     @Column
-    private String remindOn;
+    private LocalDateTime remindOn;
     @Column
-    private Boolean active;
+    private Boolean active = false;
 
+    public Reminder(UUID parentId) {
+        this.parentId = parentId;
+    }
+
+    @Override
+    public String toString() {
+        return "Reminder{" +
+                "id=" + id +
+                ", parentId=" + parentId +
+                ", start=" + start +
+                ", ends=" + ends +
+                ", remindOn='" + remindOn + '\'' +
+                ", active=" + active +
+                ", createdBy='" + createdBy + '\'' +
+                ", updatedBy='" + updatedBy + '\'' +
+                ", createdDate=" + createdDate +
+                ", updatedDate=" + updatedDate +
+                '}';
+    }
 }

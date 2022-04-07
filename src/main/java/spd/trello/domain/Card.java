@@ -1,6 +1,5 @@
 package spd.trello.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +25,8 @@ public class Card extends Resource implements ParentBased{
     @Column
     private Boolean archived;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="id")
-    Reminder reminder;
+    @JoinColumn(name="reminder_id")
+    private Reminder reminder;
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
     @CollectionTable(name = "checklist", joinColumns = @JoinColumn(name = "parent_id"))

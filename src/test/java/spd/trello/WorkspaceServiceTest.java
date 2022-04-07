@@ -1,6 +1,7 @@
 package spd.trello;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import spd.trello.domain.Workspace;
@@ -71,6 +72,7 @@ public class WorkspaceServiceTest extends BaseTest {
     }
 
     @Test
+    @Order(1)
     public void getAll() {
         List<Workspace> inMemory = workspaceService.getAll();
         inMemory.add(testWorkspace);
