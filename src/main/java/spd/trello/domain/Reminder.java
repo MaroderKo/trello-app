@@ -29,19 +29,4 @@ public class Reminder extends Resource{
         this.parentId = parentId;
     }
 
-    @Override
-    public String toString() {
-        return "Reminder{" +
-                "id=" + id +
-                ", parentId=" + parentId +
-                ", start=" + start +
-                ", ends=" + ends +
-                ", remindOn='" + remindOn + '\'' +
-                ", active=" + active +
-                ", createdBy='" + createdBy + '\'' +
-                ", updatedBy='" + updatedBy + '\'' +
-                ", createdDate=" + createdDate +
-                ", updatedDate=" + updatedDate +
-                '}';
-    }
 }
