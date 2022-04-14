@@ -7,6 +7,8 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,10 +18,12 @@ import java.util.UUID;
 @Entity
 public class Board extends Resource implements ParentBased{
     @Column
+    @NotBlank
     private String name;
     @Column
     private String description;
     @Column(name="parent_id")
+    @NotNull
     private UUID parentId;
     @Column
     @Enumerated(EnumType.STRING)

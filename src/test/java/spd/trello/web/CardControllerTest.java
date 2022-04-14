@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import spd.trello.domain.Card;
 import spd.trello.service.CardService;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -58,7 +59,7 @@ public class CardControllerTest extends ParentBasedWebTest implements Controller
 
     @Test
     @Override
-    public void getOne() throws Exception {
+    public void     getOne() throws Exception {
         when(service.read(card.getId())).thenReturn(card);
 
         MvcResult result = read("/api/cards/id/" + card.getId());

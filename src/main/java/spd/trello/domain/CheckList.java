@@ -7,6 +7,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Entity
 public class CheckList extends Resource implements ParentBased{
     @Column(name="parent_id")
+    @NotNull
     private UUID parentId;
     @Column
     private String name;

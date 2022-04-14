@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Data
@@ -13,8 +15,10 @@ import java.util.UUID;
 @Entity
 public class Attachment extends Resource implements ParentBased{
     @Column(name="parent_id")
+    @NotNull
     private UUID parentId;
     @Column
+    @NotBlank
     private String name;
     @Column
     private String link = "";
