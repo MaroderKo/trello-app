@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class Reminder extends Resource{
+public class Reminder extends Resource implements ParentBased {
     @Column(name="parent_id")
     @NotNull
     private UUID parentId;

@@ -61,7 +61,7 @@ public class UserDetailService implements UserDetailsService {
         {
             object_uuid = UUID.fromString(object_id);
         }
-        LOG.debug(object_id);
+        LOG.warn(object_id);
         User user = Optional.ofNullable(userService.getByLogin(login)).orElseThrow(() -> new ObjectNotFoundException());
         return fromUser(user, object_uuid, request.getServletPath());
     }
