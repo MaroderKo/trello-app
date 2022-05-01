@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--Аппендеры -->
+    <!--Файловый аппендер -->
+    <property name="LOG_FILE" value="Log" />
+    <property name="LOG_DIR" value="logs" />
+    <appender name="rfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>test.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>tests.%i.log.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss} %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!--Консольный аппендер -->
+    <appender name="sout" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%date %d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+    <!-- Логгеры -->
+    <!-- Корневой логгер -->
+    <root level="info">
+        <appender-ref ref="rfile" />
+        <appender-ref ref="sout"/>
+    </root>
+    <!-- Логгер нашего класса  -->
+<!--    <logger name="logging.logback.LoggingLogback" level="info" >
+        <appender-ref ref="sout" />
+    </logger>-->
+</configuration>

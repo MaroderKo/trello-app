@@ -1,4 +1,4 @@
-package spd.trello.web;
+package spd.trello.web.api;
 
 import org.springframework.web.bind.annotation.*;
 import spd.trello.domain.Workspace;

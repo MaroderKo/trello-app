@@ -1,5 +1,6 @@
 package spd.trello.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @Data
 @RequiredArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class Member extends Domain implements ParentBased {

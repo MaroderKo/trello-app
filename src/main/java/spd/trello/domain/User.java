@@ -25,5 +25,11 @@ public class User extends Domain{
     @Column
     @Email
     private String email;
+    @Column
+    @NotBlank
+    private String login;
+    @Column
+    @NotBlank
+    private String password;
 
 }

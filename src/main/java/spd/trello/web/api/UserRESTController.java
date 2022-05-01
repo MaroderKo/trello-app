@@ -1,4 +1,4 @@
-package spd.trello.web;
+package spd.trello.web.api;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,4 +12,13 @@ public class UserRESTController extends AbstractRESTController<User, UserReposit
     public UserRESTController(AbstractService<User, UserRepository> service) {
         super(service);
     }
+
+    //@Autowired
+    //SecurityService securityService;
+
+//    @PostMapping("/login")
+//    private String login(User user)
+//    {
+//        return securityService.authenticate(user.getLogin(), user.getPassword());
+//    }
 }

@@ -30,10 +30,13 @@ spring:
       matching-strategy: ant_path_matcher
 
   jpa:
-    show-sql: true
+    show-sql: false
     open-in-view: false
     properties:
       hibernate.format_sql: true
 
 save.tofile: true
 save.path: C:\test
+
+jwt.secret: SecretKey
+jwt.header: Authorization

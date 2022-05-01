@@ -2,6 +2,7 @@ package spd.trello.domain;
 
 
 import lombok.*;
+import spd.trello.security.SecurityConfig;
 
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public abstract class Resource extends Domain{
-    String createdBy = "";
+    String createdBy = "template";
     String updatedBy;
     LocalDateTime createdDate = LocalDateTime.now().withNano(0);
     LocalDateTime updatedDate;

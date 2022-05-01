@@ -7,6 +7,7 @@ import spd.trello.domain.ParentBased;
 import spd.trello.repository.AbstractParentBasedRepository;
 import spd.trello.service.AbstractParentBasedService;
 import spd.trello.service.AbstractService;
+import spd.trello.web.api.AbstractRESTController;
 
 import java.util.List;
 import java.util.UUID;

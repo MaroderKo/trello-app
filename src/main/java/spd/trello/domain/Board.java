@@ -9,7 +9,9 @@ import org.hibernate.annotations.LazyCollectionOption;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -36,5 +38,12 @@ public class Board extends Resource implements ParentBased{
     @CollectionTable(name = "cardlist", joinColumns = @JoinColumn(name = "parent_id"))
     @Column(name = "id")
     List<UUID> cardlist;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "board_member",
+            joinColumns = @JoinColumn(name = "board_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id"))
+    List<Member> members = new ArrayList<>();
 
 }

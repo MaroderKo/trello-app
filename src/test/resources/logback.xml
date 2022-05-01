@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--Аппендеры -->
+    <!--Файловый аппендер -->
+    <appender name="file" class="ch.qos.logback.core.FileAppender">
+        <file>log.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</Pattern>
+        </encoder>
+    </appender>
+    <!--Файловый аппендер -->
+    <property name="LOG_FILE" value="Log" />
+    <property name="LOG_DIR" value="logs" />
+    <!--Апендер стандартных логов-->
+    <appender name="rfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<!--        <file>lastest.log</file>-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${LOG_DIR}/${LOG_FILE} %d{yyyy-MM-dd} %d{HH-mm-ss-SSS}.log</fileNamePattern>
+
+            <!-- keep 30 days' worth of history capped at 3GB total size -->
+            <maxHistory>3</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%date %level %logger{10} %msg%n</Pattern>
+        </encoder>
+    </appender>
+    <!--&lt;!&ndash;Аппендер ошибок&ndash;&gt;
+    <appender name="errfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+&lt;!&ndash;        <file>lastest.log</file>&ndash;&gt;
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            &lt;!&ndash; daily rollover &ndash;&gt;
+            <fileNamePattern>${LOG_DIR}/${LOG_FILE} %d{yyyy-MM-dd} %d{HH-mm-ss-SSS}.log</fileNamePattern>
+            &lt;!&ndash; keep 30 days' worth of history capped at 3GB total size &ndash;&gt;
+            <maxHistory>3</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%date %level %logger{10} %msg%n</Pattern>
+        </encoder>
+    </appender>-->
+    <!--Консольный аппендер -->
+    <appender name="sout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%date %d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+    <!-- Фильтры -->
+    <!-- Фильтр по маркеру -->
+    <turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">
+        <Marker>marker</Marker>
+        <OnMatch>DENY</OnMatch>
+    </turboFilter>
+    <!-- Логгеры -->
+    <!-- Корневой логгер -->
+    <root level="info">
+        <appender-ref ref="rfile" />
+    </root>
+<!--    &lt;!&ndash; Логгер нашего класса  &ndash;&gt;
+    <logger name="logging.logback.LoggingLogback" level="info" >
+        <appender-ref ref="sout" />
+    </logger>-->
+</configuration>
