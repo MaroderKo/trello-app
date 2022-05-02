@@ -1,5 +1,6 @@
 package spd.trello.security;
 
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +23,7 @@ public class JWTTokenFilter extends GenericFilterBean {
     }
 
     @Override
+    @SneakyThrows
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         String token = tokenProvider.resolveToken((HttpServletRequest) request);
         if (token != null && tokenProvider.validateToken(token))

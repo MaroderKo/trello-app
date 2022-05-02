@@ -29,6 +29,7 @@ public class AttachmentService extends AbstractParentBasedService<Attachment, At
     @SneakyThrows
     @Override
     public Attachment create(Attachment attachment) {
+        Attachment saved = super.create(attachment);
         if (saveToFile)
         {
             File file = new File(folder+"/"+attachment.getName());
@@ -42,7 +43,9 @@ public class AttachmentService extends AbstractParentBasedService<Attachment, At
             attachment.setLink(file.getAbsolutePath());
             attachment.getData().setFile(null);
         }
-        return super.create(attachment);
+
+        return saved;
+
     }
 
     @Override

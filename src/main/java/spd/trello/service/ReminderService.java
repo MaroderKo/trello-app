@@ -23,7 +23,7 @@ public class ReminderService extends AbstractParentBasedService<Reminder, Remind
     private void init()
     {
         alertService.setService(this);
-        LOG.warn("ReminderAlertService started!");
+        LOG.info("ReminderAlertService started!");
     }
 
     public ReminderService(ReminderRepository repository) {
@@ -36,7 +36,7 @@ public class ReminderService extends AbstractParentBasedService<Reminder, Remind
     }
 
     public void deactivate(UUID r) {
-        LOG.warn("Reminder "+r+" deactivated in DB!");
+        LOG.info("Reminder "+r+" deactivated in DB!");
         repository.deactivate(r);
     }
 }

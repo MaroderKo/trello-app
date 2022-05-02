@@ -27,7 +27,7 @@
          <tr th:each="attachment:${attachments}">
            <td th:text="${attachment.id}" />
            <td th:text="${attachment.name}"/>
-           <td><a th:href="@{'/attachments/downloadFile/'+${attachment.id}}">Download</a></td>
+           <td><a th:href="@{'/attachments/id/'+${attachment.id}}">Download</a></td>
          </tr>
        </tbody>
      </table>

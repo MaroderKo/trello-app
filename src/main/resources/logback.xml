@@ -27,7 +27,7 @@
             <Pattern>%date %d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</Pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>WARN</level>
+            <level>INFO</level>
         </filter>
     </appender>
     <!-- Логгеры -->

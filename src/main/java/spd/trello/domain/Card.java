@@ -36,4 +36,9 @@ public class Card extends Resource implements ParentBased{
     @CollectionTable(name = "checklist", joinColumns = @JoinColumn(name = "parent_id"))
     @Column(name = "id")
     List<UUID> checkList = new ArrayList<>();
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @CollectionTable(name = "comment", joinColumns = @JoinColumn(name = "parent_id"))
+    @Column(name = "id")
+    List<UUID> comments = new ArrayList<>();
 }

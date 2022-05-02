@@ -34,7 +34,7 @@ public class Comment extends Resource implements ParentBased{
     @LazyCollection(LazyCollectionOption.FALSE)
     @CollectionTable(name = "attachment", joinColumns = @JoinColumn(name = "parent_id"))
     @Column(name = "id")
-    List<Attachment> attachments = new ArrayList<>();
+    List<UUID> attachments = new ArrayList<>();
 
 }
 

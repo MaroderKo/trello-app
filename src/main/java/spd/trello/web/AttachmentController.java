@@ -9,6 +9,8 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.ServletServerHttpResponse;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -45,9 +47,11 @@ public class AttachmentController {
 		}
 		return "redirect:/attachments";
 	}
-	@GetMapping("/downloadFile/{fileId}")
-	public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable UUID fileId){
+	@GetMapping("/id/{fileId}")
+	@PreAuthorize("hasAuthority('read')")
+	public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable UUID fileId, ServletServerHttpResponse response){
 		Attachment attachment = attachmentStorageService.read(fileId);
+		//response.getHeaders().set(HttpHeaders.ACCEPT_RANGES, "bytes");
 		return ResponseEntity.ok()
 				.contentType(MediaType.MULTIPART_MIXED)
 				.header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\""+ attachment.getName()+"\"")

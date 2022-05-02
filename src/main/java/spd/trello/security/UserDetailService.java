@@ -68,12 +68,12 @@ public class UserDetailService implements UserDetailsService {
     {
         if (object_id != null) {
             Role role = roleManager.getRole(url, object_id, user);
-            LOG.warn("Выдана роль при проверке - "+role.name());
+            LOG.info("Выдана роль при проверке - "+role.name());
             return new SecurityUser(user.getLogin(), user.getPassword(), role.getAuthorities());
         }
         else
         {
-            LOG.warn("Выдана роль автоматически - гость");
+            LOG.info("Выдана роль автоматически - гость");
             return new SecurityUser(user.getLogin(), user.getPassword(), Role.GUEST.getAuthorities());
         }
     }

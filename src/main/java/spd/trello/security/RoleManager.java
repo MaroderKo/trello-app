@@ -65,14 +65,14 @@ public class RoleManager {
                 } else
                 {
                     Role role = board.getMembers().stream().filter(m -> m.getParentId().equals(user.getId())).map(m -> m.getRole()).findFirst().orElse(board.getVisibility() == BoardVisibility.PRIVATE ? Role.ACCESS_DENIED : Role.GUEST);
-                    LOG.warn("Выдана роль от борды - "+role.name());
+                    LOG.info("Выдана роль от борды - "+role.name());
                     return role;
                 }
 
             case 5:
                 Workspace workspace = workspaceService.read(current);
                 Role role = workspace.getMembers().stream().filter(m -> m.getParentId().equals(user.getId())).map(m -> m.getRole()).findFirst().orElse(workspace.getVisibility() == WorkspaceVisibility.PRIVATE ? Role.ACCESS_DENIED : Role.GUEST);
-                LOG.warn("Выдана роль от воркспейса - "+role.name());
+                LOG.info("Выдана роль от воркспейса - "+role.name());
                 return role;
 
         }
