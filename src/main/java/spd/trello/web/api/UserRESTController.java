@@ -1,5 +1,8 @@
 package spd.trello.web.api;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spd.trello.domain.User;
@@ -13,4 +16,9 @@ public class UserRESTController extends AbstractRESTController<User, UserReposit
         super(service);
     }
 
+    @Override
+    @PreAuthorize("true")
+    public ResponseEntity<User> Create(@RequestBody User user) {
+        return super.Create(user);
+    }
 }
