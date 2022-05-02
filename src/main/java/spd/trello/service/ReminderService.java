@@ -23,8 +23,7 @@ public class ReminderService extends AbstractParentBasedService<Reminder, Remind
     private void init()
     {
         alertService.setService(this);
-        alertService.addAll(getAllActive());
-        LOG.warn("ReminderAlertService constructed");
+        LOG.warn("ReminderAlertService started!");
     }
 
     public ReminderService(ReminderRepository repository) {

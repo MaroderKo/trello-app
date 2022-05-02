@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface ReminderRepository extends AbstractParentBasedRepository<Reminder>{
 //    @Query("select Card from Card where parentId = ?1")
 //    List<Card> findByParentId(UUID id);
-    @Query(value = "select * from reminder where active = true",nativeQuery = true)
+    @Query(value = "select * from reminder where active = true and remind_on < now()",nativeQuery = true)
     List<Reminder> findActive();
 
     @Query(value = "update reminder AS r SET active = false where id = ?1", nativeQuery = true)

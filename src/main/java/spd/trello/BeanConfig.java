@@ -7,6 +7,9 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+
 @Configuration
 public class BeanConfig {
 
@@ -28,9 +31,15 @@ public class BeanConfig {
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
+        props.put("mail.debug", "false");
 
         return mailSender;
+    }
+
+    @Bean
+    ThreadPoolExecutor executor()
+    {
+        return (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
     }
 
 
