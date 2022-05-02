@@ -13,6 +13,7 @@ import spd.trello.repository.AbstractRepository;
 import spd.trello.security.SecurityConfig;
 import spd.trello.service.AbstractService;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,7 +32,7 @@ public class AbstractRESTController<T extends Domain, R extends AbstractReposito
 
     @PostMapping(value = "/create")
     @PreAuthorize("hasAuthority('create')")
-    public ResponseEntity<T> Create(@RequestBody T t) {
+    public ResponseEntity<T> Create(@Valid @RequestBody T t) {
         return new ResponseEntity<>(service.create(t), HttpStatus.OK);
     }
 
@@ -43,9 +44,9 @@ public class AbstractRESTController<T extends Domain, R extends AbstractReposito
         return new ResponseEntity<>(service.read(UUID.fromString(id)), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/update")
+    @PostMapping(value = "/id/{id}")
     @PreAuthorize("hasAuthority('write')")
-    public ResponseEntity<T> Update(@RequestBody T t) {
+    public ResponseEntity<T> Update(@PathVariable String id,@Valid @RequestBody T t) {
         if (service.read(t.getId()) == null)
             throw new ObjectNotFoundException();
         if (t instanceof Resource)

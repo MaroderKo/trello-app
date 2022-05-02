@@ -1,4 +1,4 @@
-package spd.trello.security;
+package spd.trello.web.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spd.trello.domain.User;
+import spd.trello.security.JWTTokenProvider;
+import spd.trello.security.SecurityConfig;
 import spd.trello.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,13 +22,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthenticationRestController {
+public class AuthenticationRESTController {
 
     private final AuthenticationManager authenticationManager;
     private JWTTokenProvider jwtTokenProvider;
     private UserService userService;
 
-    public AuthenticationRestController(AuthenticationManager authenticationManager, JWTTokenProvider jwtTokenProvider, UserService userService) {
+    public AuthenticationRESTController(AuthenticationManager authenticationManager, JWTTokenProvider jwtTokenProvider, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;

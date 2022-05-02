@@ -1,5 +1,7 @@
 package spd.trello.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import spd.trello.domain.*;
@@ -25,6 +27,8 @@ public class RoleManager {
     UserService userService;
     @Autowired
     AttachmentService attachmentService;
+
+    private static final Logger LOG = LoggerFactory.getLogger(RoleManager.class);
 
     private static final List<String> LINKS = List.of("attachments","comments","cards","cardlists","boards","workspaces","users");
 
@@ -60,12 +64,16 @@ public class RoleManager {
                     current = board.getParentId();
                 } else
                 {
-                    return board.getMembers().stream().filter(m -> m.getParentId().equals(user)).map(m -> m.getRole()).findFirst().orElse(board.getVisibility()==BoardVisibility.PRIVATE ? Role.ACCESS_DENIED : Role.GUEST);
+                    Role role = board.getMembers().stream().filter(m -> m.getParentId().equals(user.getId())).map(m -> m.getRole()).findFirst().orElse(board.getVisibility() == BoardVisibility.PRIVATE ? Role.ACCESS_DENIED : Role.GUEST);
+                    LOG.warn("Выдана роль от борды - "+role.name());
+                    return role;
                 }
 
             case 5:
                 Workspace workspace = workspaceService.read(current);
-                return workspace.getMembers().stream().filter(m -> m.getParentId().equals(user)).map(m -> m.getRole()).findFirst().orElse(workspace.getVisibility() == WorkspaceVisibility.PRIVATE ? Role.ACCESS_DENIED : Role.GUEST);
+                Role role = workspace.getMembers().stream().filter(m -> m.getParentId().equals(user.getId())).map(m -> m.getRole()).findFirst().orElse(workspace.getVisibility() == WorkspaceVisibility.PRIVATE ? Role.ACCESS_DENIED : Role.GUEST);
+                LOG.warn("Выдана роль от воркспейса - "+role.name());
+                return role;
 
         }
 

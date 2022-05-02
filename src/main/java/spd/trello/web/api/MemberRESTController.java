@@ -36,8 +36,8 @@ public class MemberRESTController extends ParentBasedController<Member, MemberRe
 
     @Override
     @PreAuthorize("hasAuthority('member.edit')")
-    public ResponseEntity<Member> Update(Member member) {
-        return super.Update(member);
+    public ResponseEntity<Member> Update(String id,Member member) {
+        return super.Update(id, member);
     }
 
     @Override

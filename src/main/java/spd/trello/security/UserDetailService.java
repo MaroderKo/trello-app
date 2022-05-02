@@ -57,11 +57,9 @@ public class UserDetailService implements UserDetailsService {
             }
         } catch (NullPointerException ignored){};
         UUID object_uuid = null;
-        if (object_id != null)
-        {
+        if (object_id != null) {
             object_uuid = UUID.fromString(object_id);
         }
-        LOG.warn(object_id);
         User user = Optional.ofNullable(userService.getByLogin(login)).orElseThrow(() -> new ObjectNotFoundException());
         return fromUser(user, object_uuid, request.getServletPath());
     }

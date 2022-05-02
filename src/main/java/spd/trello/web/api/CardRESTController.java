@@ -1,5 +1,6 @@
 package spd.trello.web.api;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spd.trello.domain.Card;
@@ -7,6 +8,8 @@ import spd.trello.repository.CardRepository;
 import spd.trello.service.AbstractParentBasedService;
 import spd.trello.service.AbstractService;
 import spd.trello.web.ParentBasedController;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/cards")
