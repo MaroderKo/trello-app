@@ -1,5 +1,6 @@
 package spd.trello.web;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import spd.trello.domain.Domain;
@@ -21,7 +22,7 @@ public class ParentBasedController<T extends Domain & ParentBased, R extends Abs
         this.service = service1;
     }
 
-    @RequestMapping("parent/{id}")
+    @GetMapping("parent/{id}")
     public List<T> byParent(@PathVariable String id)
     {
         return service.getParent(UUID.fromString(id));

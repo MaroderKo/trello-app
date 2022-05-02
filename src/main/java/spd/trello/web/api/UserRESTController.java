@@ -13,12 +13,4 @@ public class UserRESTController extends AbstractRESTController<User, UserReposit
         super(service);
     }
 
-    //@Autowired
-    //SecurityService securityService;
-
-//    @PostMapping("/login")
-//    private String login(User user)
-//    {
-//        return securityService.authenticate(user.getLogin(), user.getPassword());
-//    }
 }

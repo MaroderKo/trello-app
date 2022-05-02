@@ -1,7 +1,11 @@
 package spd.trello.service;
 
+import com.fasterxml.classmate.TypeResolver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import spd.trello.domain.CheckList;
+import spd.trello.domain.CheckableItem;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -20,11 +24,16 @@ import java.util.List;
 @Configuration
 public class SwaggerConfiguration {
 
+    @Autowired
+    TypeResolver typeResolver;
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo())
-                .select().apis(RequestHandlerSelectors.basePackage("spd.trello.web"))
+                .select().apis(RequestHandlerSelectors.basePackage("spd.trello.web.api"))
                 .paths(PathSelectors.any()).build()
+                .additionalModels(typeResolver.resolve(CheckList.class))
+                .additionalModels(typeResolver.resolve(CheckableItem.class))
                 .useDefaultResponseMessages(false)
                 .securitySchemes(Collections.singletonList(apiKey()))
                 .securityContexts(Collections.singletonList(securityContext()))

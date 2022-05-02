@@ -24,7 +24,7 @@ public class AbstractRESTController<T extends Domain, R extends AbstractReposito
         this.service = service;
     }
 
-    @RequestMapping
+    @GetMapping
     @PreAuthorize("hasAuthority('read')")
     public List<T> showAll() {
         return service.getAll();
