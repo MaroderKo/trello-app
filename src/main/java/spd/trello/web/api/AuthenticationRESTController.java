@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
+import spd.trello.domain.AuthUserDAO;
 import spd.trello.domain.User;
 import spd.trello.security.JWTTokenProvider;
 import spd.trello.security.SecurityConfig;
@@ -32,14 +33,14 @@ public class AuthenticationRESTController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> authenticate(@RequestParam String login, @RequestParam String password){
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, password));
-        User user = userService.getByLogin(login);
+    public ResponseEntity<Object> authenticate(@RequestBody AuthUserDAO authUser){
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authUser.getLogin(), authUser.getPassword()));
+        User user = userService.getByLogin(authUser.getLogin());
         if (user == null)
             throw new UsernameNotFoundException("User doesn't exist!");
         String token = jwtTokenProvider.createToken(user.getLogin(), user.getId());
         Map<Object, Object> response = new HashMap<>();
-        response.put("login", login);
+        response.put("login", user.getLogin());
         response.put("token", token);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

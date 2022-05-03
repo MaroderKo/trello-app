@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public abstract class Resource extends Domain{
-    String createdBy = "template";
+    String createdBy = "";
     String updatedBy;
     LocalDateTime createdDate = LocalDateTime.now().withNano(0);
     LocalDateTime updatedDate;

@@ -29,7 +29,6 @@ public class ReminderAlertService {
     @Scheduled(cron = "1 * * * * *")
     private void check()
     {
-        LOG.info("Schedule executed!");
         List<Reminder> storage = service.getAllActive();
         LocalDateTime now = LocalDateTime.now();
         for (Reminder r :

@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerMapping;
+import spd.trello.domain.CreateObjectContext;
 import spd.trello.domain.Role;
 import spd.trello.domain.User;
 import spd.trello.exception.ObjectNotFoundException;
@@ -35,6 +36,9 @@ public class UserDetailService implements UserDetailsService {
     @Autowired
     private HttpServletRequest request;
 
+    @Autowired
+    CreateObjectContext context;
+
     Pattern pairRegex;
 
     @PostConstruct
@@ -49,19 +53,25 @@ public class UserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         String object_id = null;
+        String url = request.getServletPath();
+
         try {
-            Matcher matcher = pairRegex.matcher(request.getServletPath());
+            Matcher matcher = pairRegex.matcher(url);
             if (matcher.find())
             {
                 object_id = matcher.group();
             }
         } catch (NullPointerException ignored){};
         UUID object_uuid = null;
-        if (object_id != null) {
+        if (url.contains("create") && context != null)
+        {
+            object_uuid = context.getParentId();
+        }
+        else if (object_id != null) {
             object_uuid = UUID.fromString(object_id);
         }
         User user = Optional.ofNullable(userService.getByLogin(login)).orElseThrow(() -> new ObjectNotFoundException());
-        return fromUser(user, object_uuid, request.getServletPath());
+        return fromUser(user, object_uuid, url);
     }
 
     private SecurityUser fromUser(User user, UUID object_id, String url)

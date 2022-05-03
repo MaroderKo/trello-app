@@ -1,6 +1,8 @@
 package spd.trello.service;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import spd.trello.domain.*;
 import spd.trello.exception.ObjectNotFoundException;
@@ -16,6 +18,8 @@ import java.util.UUID;
 @Validated
 public abstract class AbstractService<T extends Domain, R extends AbstractRepository<T>> {
 
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+
     protected R repository;
 
     protected AbstractService(R repository)
@@ -26,6 +30,7 @@ public abstract class AbstractService<T extends Domain, R extends AbstractReposi
     @Transactional
     public T create(@Valid T t)
     {
+        LOG.info("Created instance of "+t.getClass().getName()+" with id "+t.getId());
         return repository.saveAndFlush(t);
     }
     public T read(@NotNull UUID id)
@@ -34,6 +39,7 @@ public abstract class AbstractService<T extends Domain, R extends AbstractReposi
     }
     public T update (@Valid T t)
     {
+        LOG.info("Updated instance of "+t.getClass().getName()+" with id "+t.getId());
         if (t instanceof Resource)
         {
             ((Resource) t).setCreatedBy(SecurityConfig.getUserName());
